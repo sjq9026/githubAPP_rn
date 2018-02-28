@@ -11,6 +11,7 @@ import {
   Text,
   View
 } from 'react-native';
+import  ScrollableTabView, {ScrollableTabBar} from  "react-native-scrollable-tab-view";
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -24,6 +25,15 @@ export default class PopularTab extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
+          <ScrollableTabView
+              renderTabBar={() => <DefaultTabBar/>}>
+              <Text tabLabel='Tab1'/>
+              <Text tabLabel='Tab2'/>
+              <Text tabLabel='Tab3'/>
+              <Text tabLabel='Tab4'/>
+              <Text tabLabel='Tab5'/>
+              <Text tabLabel='Tab6'/>
+          </ScrollableTabView>
         <Text style={styles.welcome}>
           Welcome to React Native!
         </Text>
