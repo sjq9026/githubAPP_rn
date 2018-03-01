@@ -9,9 +9,11 @@ import {
   Platform,
   StyleSheet,
   Text,
-  View
+  View,
+    Dimensions,
+    ToastAndroid
 } from 'react-native';
-import  ScrollableTabView, {ScrollableTabBar} from  "react-native-scrollable-tab-view";
+import  ScrollableTabView,{ScrollableTabBar,DefaultTabBar} from  "react-native-scrollable-tab-view";
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -21,30 +23,49 @@ const instructions = Platform.select({
 });
 
 type Props = {};
+var ScreenWidth = Dimensions.get('window').width;
+var tabValue = ["热门","科技","军事","体育","社会","娱乐","彩票","北京","问答","更多"];
 export default class PopularTab extends Component<Props> {
+    constructor(props){
+        super(props);
+        this.renderTabItems = this.renderTabItems.bind(this);
+
+    }
+
+
   render() {
     return (
       <View style={styles.container}>
-          <ScrollableTabView
-              renderTabBar={() => <DefaultTabBar/>}>
-              <Text tabLabel='Tab1'/>
-              <Text tabLabel='Tab2'/>
-              <Text tabLabel='Tab3'/>
-              <Text tabLabel='Tab4'/>
-              <Text tabLabel='Tab5'/>
-              <Text tabLabel='Tab6'/>
+          <ScrollableTabView style={{flex:1} }
+              renderTabBar={() => <ScrollableTabBar/>}
+                             initialPage={1}
+                             locked={false}
+                             onChangeTab={(obj)=>{
+                                 this.loadData(obj.i);
+
+                             }}
+                             scrollWithoutAnimation={true}
+                             tabBarUnderlineStyle={styles.lineStyle}
+                             tabBarBackgroundColor={"#377DFE"}
+                             tabBarActiveTextColor={"#E61A5F"}
+                             tabBarInactiveTextColor={"white"}>
+
+              {this.renderTabItems()}
           </ScrollableTabView>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit 33333App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
       </View>
     );
+  }
+    renderTabItems(){
+      let length = tabValue.length;
+      let views = [];
+      for(var i=0;i<length;i++){
+          views.push(<Text key={i} tabLabel={tabValue[i]}/>)
+      }
+            return views;
+    }
+
+  loadData(index){
+      ToastAndroid.show(index+"",2000)
   }
 }
 
@@ -65,4 +86,8 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 5,
   },
+    lineStyle: {
+        height: 2,
+        backgroundColor: '#FF0000',
+    },
 });
