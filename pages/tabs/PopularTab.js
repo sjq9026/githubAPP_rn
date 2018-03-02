@@ -14,6 +14,7 @@ import {
     ToastAndroid
 } from 'react-native';
 import  ScrollableTabView,{ScrollableTabBar,DefaultTabBar} from  "react-native-scrollable-tab-view";
+import NetUtil from "../Utils/NetUtil";
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -22,12 +23,17 @@ const instructions = Platform.select({
     'Shake or press menu button for dev menu',
 });
 
-type Props = {};
+const URL = 'https://api.github.com/search/repositories?q=';
+const QUERY_STR = '&sort=stars';
+
 var ScreenWidth = Dimensions.get('window').width;
 var tabValue = ["热门","科技","军事","体育","社会","娱乐","彩票","北京","问答","更多"];
 export default class PopularTab extends Component<Props> {
     constructor(props){
         super(props);
+        this.state=({
+            data:[]
+        })
         this.renderTabItems = this.renderTabItems.bind(this);
 
     }
@@ -42,15 +48,14 @@ export default class PopularTab extends Component<Props> {
                              locked={false}
                              onChangeTab={(obj)=>{
                                  this.loadData(obj.i);
-
                              }}
                              scrollWithoutAnimation={true}
                              tabBarUnderlineStyle={styles.lineStyle}
                              tabBarBackgroundColor={"#377DFE"}
                              tabBarActiveTextColor={"#E61A5F"}
                              tabBarInactiveTextColor={"white"}>
-
               {this.renderTabItems()}
+              <Text>{this.data}</Text>
           </ScrollableTabView>
       </View>
     );
@@ -65,7 +70,15 @@ export default class PopularTab extends Component<Props> {
     }
 
   loadData(index){
-      ToastAndroid.show(index+"",2000)
+        let that = this;
+        var netUrl = URL+"Android"+QUERY_STR;
+      ToastAndroid.show(netUrl,1000)
+            NetUtil.get(netUrl)
+                .then(result=>{
+                        that.setState({
+                            data:result.items
+                        })
+                })
   }
 }
 
