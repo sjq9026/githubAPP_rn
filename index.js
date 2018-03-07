@@ -7,6 +7,7 @@ import TrendingTab from "./pages/tabs/TrendingTab";
 import FavoritesTab from "./pages/tabs/FavoritesTab";
 import MineTab from "./pages/tabs/MineTab";
 import WelcomePage from "./pages/WelcomePage";
+import CustomKeyPage from "./pages/other/CustomKeyPage";
 
 
 
@@ -109,7 +110,14 @@ const  pages = StackNavigator(
         },
         Tab: {
             screen: tab
+        },
+        CustomKeyPage:{
+            screen:CustomKeyPage,
+            navigationOptions: {
+                header: null,
+            }
         }
+
     }
 
 )

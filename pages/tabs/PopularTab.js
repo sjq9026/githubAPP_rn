@@ -7,14 +7,18 @@
 import React, { Component } from 'react';
 import {
   Platform,
-  StyleSheet,
+    StyleSheet,
   Text,
   View,
     Dimensions,
-    ToastAndroid
+    ToastAndroid,
+    RefreshControl,
+    ActivityIndicator,
+    ListView
 } from 'react-native';
 import  ScrollableTabView,{ScrollableTabBar,DefaultTabBar} from  "react-native-scrollable-tab-view";
 import NetUtil from "../Utils/NetUtil";
+import PopularItemView from "../../itemViews/PopularItemView";
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -27,67 +31,149 @@ const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars';
 
 var ScreenWidth = Dimensions.get('window').width;
-var tabValue = ["热门","科技","军事","体育","社会","娱乐","彩票","北京","问答","更多"];
+var tabValue = ["Android","IOS","JAVA","JavaSript","Android","IOS","JAVA","JavaSript"];
 export default class PopularTab extends Component<Props> {
     constructor(props){
         super(props);
-        this.state=({
-            data:[]
-        })
+        this.state= {
+            result:"",
+
+
+        }
         this.renderTabItems = this.renderTabItems.bind(this);
 
+
     }
+
+
 
 
   render() {
     return (
-      <View style={styles.container}>
-          <ScrollableTabView style={{flex:1} }
+      <View style={stys.container}>
+          <ScrollableTabView
               renderTabBar={() => <ScrollableTabBar/>}
                              initialPage={1}
                              locked={false}
-                             onChangeTab={(obj)=>{
-                                 this.loadData(obj.i);
-                             }}
                              scrollWithoutAnimation={true}
-                             tabBarUnderlineStyle={styles.lineStyle}
+                             tabBarUnderlineStyle={stys.lineStyle}
                              tabBarBackgroundColor={"#377DFE"}
                              tabBarActiveTextColor={"#E61A5F"}
                              tabBarInactiveTextColor={"white"}>
-              {this.renderTabItems()}
-              <Text>{this.data}</Text>
+              <PopularLabel tabLabel="IOS"/>
+              <PopularLabel tabLabel="Android"/>
+              <PopularLabel tabLabel="Java"/>
+              <PopularLabel tabLabel="IOS"/>
+              <PopularLabel tabLabel="IOS"/>
           </ScrollableTabView>
+
+
+
       </View>
-    );
-  }
+    );}
+
     renderTabItems(){
       let length = tabValue.length;
       let views = [];
       for(var i=0;i<length;i++){
-          views.push(<Text key={i} tabLabel={tabValue[i]}/>)
+          views.push(<PopularLabel key={i} tabLabel={tabValue[i]}/>)
       }
             return views;
     }
-
-  loadData(index){
-        let that = this;
-        var netUrl = URL+"Android"+QUERY_STR;
-      ToastAndroid.show(netUrl,1000)
-            NetUtil.get(netUrl)
-                .then(result=>{
-                        that.setState({
-                            data:result.items
-                        })
-                })
-  }
 }
 
-const styles = StyleSheet.create({
+class PopularLabel extends  Component{
+    constructor(props){
+        super(props);
+        this.state={
+            refreshing:false,
+            loadingMore:false,
+            dataSource:new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
+        }
+        this.renderFooterView =  this.renderFooterView.bind(this);
+        this.reloadWordData = this.reloadWordData.bind(this);
+        this.renderItemView = this.renderItemView.bind(this);
+        this.reloadWordData();
+    }
+
+   render(){
+        return (
+            <View style={{flex:1}}>
+                <ListView
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={this.reloadWordData}
+                        />}
+                    dataSource={this.state.dataSource}
+                    renderRow={(rowData) => this.renderItemView(rowData)}
+                    renderFooter={this.renderFooterView}
+                    onEndReached={this._toEnd.bind(this)}
+                    onEndReachedThreshold={5}
+                />
+            </View>
+
+        )
+   }
+
+    componentDidMount(){
+        this.loadData();
+    }
+
+    loadData(){
+        var netUrl = URL+this.props.tabLabel+QUERY_STR;
+        NetUtil.get(netUrl).then(result=>{
+            var datas = result.items;
+                this.setState({
+                    dataSource:this.state.dataSource.cloneWithRows(datas),
+                })
+        })
+    }
+
+    reloadWordData(){
+      /*  this.setState({
+            refreshing:false
+        })*/
+    }
+
+    renderFooterView(){
+        if(this.state.loadingMore){
+            return (<ActivityIndicator style={{ marginVertical:20 }}/>);
+        }else{
+            return (<View style={{marginVertical: 10}}>
+                <Text>加载更多</Text>
+            </View>);
+        }
+    }
+
+
+    _toEnd(){
+        this.setState({
+            loadingMore:true
+        });
+        var t = this;
+
+        ToastAndroid.show("加载更多",1000);
+        setInterval(function () {
+           /* t.setState({
+                loadingMore:false
+            })*/
+        },2000);
+    }
+
+    renderItemView(rowdata){
+        return <PopularItemView data={rowdata}/>
+    }
+
+
+}
+
+
+
+
+const stys = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
   },
   welcome: {
     fontSize: 20,
@@ -103,4 +189,14 @@ const styles = StyleSheet.create({
         height: 2,
         backgroundColor: '#FF0000',
     },
+   content:{
+      width:ScreenWidth,
+       height:100,
+       borderWidth:1,
+       borderColor:"red",
+   },
+    lv:{
+        flex: 1,
+    }
+
 });
