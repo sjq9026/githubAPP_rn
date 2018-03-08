@@ -17,12 +17,15 @@ export default class DataUtil {
         console.log(this.flag)
         return new Promise((resolve,reject)=>{
             AsyncStorage.getItem(this.flag,(error,result)=>{
+                console.log("1111")
+                console.log(this.flag)
                 if(error){
                     reject(error);
                     return;
                 }
                 if (!result){
-                    var data=this.flag === FLAG.all_language ? keys : null;
+                    var data= this.flag === FLAG.all_language ? keys : null;
+                    console.log(JSON.stringify(data))
                     this.saveAllLanguage(data);
                     resolve(data);
                 }else {
@@ -43,9 +46,8 @@ export default class DataUtil {
 
 
     saveAllLanguage(data){
-        console.log(JSON.stringify(data))
         AsyncStorage.setItem(FLAG.all_language,JSON.stringify(data),(error)=>{
-            alert("数据保存失败");
+            alert("保存失败")
         })
     }
 }

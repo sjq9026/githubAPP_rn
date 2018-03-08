@@ -11,10 +11,13 @@ import {
     Text,
     View,
     ToastAndroid,
-    Dimensions
+    Dimensions,
+    ScrollView,
+    Image
 } from 'react-native';
 import CustomNavBar from "./CustomNavBar"
 import DataUtil, {FLAG} from "../Utils/DataUtil";
+import CheckBox from 'react-native-check-box'
 
 const instructions = Platform.select({
     ios: 'Press Cmd+R to reload,\n' +
@@ -36,6 +39,7 @@ export default class CustomKeyPage extends Component<Props> {
         this.saveKey = this.saveKey.bind(this);
         this.gotoLastPage = this.gotoLastPage.bind(this);
         this.loadData = this.loadData.bind(this);
+        this.renderKeyView = this.renderKeyView.bind(this);
     }
 
 
@@ -51,7 +55,7 @@ export default class CustomKeyPage extends Component<Props> {
                     dataArray: result
                 })
             })
-            .catch(error=>{
+            .catch(error => {
                 console.log(error)
             })
     }
@@ -65,9 +69,10 @@ export default class CustomKeyPage extends Component<Props> {
                     leftBtnClick={this.gotoLastPage}
                     rightBtnClick={this.saveKey}
                 />
-                <Text style={{width: ScreenWidth, height: 500}}>
-                    {JSON.stringify(this.state.dataArray)}
-                </Text>
+                <ScrollView>
+                    {this.renderKeyView()}
+                </ScrollView>
+
 
 
             </View>
@@ -84,6 +89,54 @@ export default class CustomKeyPage extends Component<Props> {
     }
 
 
+    renderKeyView() {
+        if (!this.state.dataArray || this.state.dataArray.length === 0) return null;
+        var views = [];
+        let len = this.state.dataArray.length;
+        for (let i = 0, j = len - 1; i < j; i += 2) {
+            views.push(
+                <View key={i}>
+                    <View style={styles.cell}>
+                        {this.renderCheckBox(this.state.dataArray[i])}
+                        {this.renderCheckBox(this.state.dataArray[i+1])}
+                    </View>
+                </View>
+            )
+        }
+        if (len % 2 !== 0) {
+            views.push(
+                <View key={len - 1}>
+                    <View style={styles.cell}>
+                        {this.renderCheckBox(this.state.dataArray[len - 1])}
+                    </View>
+                </View>
+            )
+        }
+
+
+        return views;
+    }
+
+
+    renderCheckBox(data){
+        console.log(JSON.stringify(data))
+        return(
+           <CheckBox
+               style={{flex:1,padding:10}}
+               onClick={()=>this.onClick(data)}
+               isChecked={data.checked}
+               isIndeterminate={false}
+               leftText={data.name}
+               checkedImage={<Image style={{tintColor:"#6495ED"}} source={require("../../imgs/ic_check_box.png")}/>}
+               unCheckedImage={<Image style={{tintColor:"#6495ED"}} source={require("../../imgs/ic_check_box_outline_blank.png")}/>}
+           />
+        )
+    }
+
+    onClick(data) {
+        data.checked = !data.checked;
+
+    }
 }
 
 const styles = StyleSheet.create({
@@ -103,4 +156,11 @@ const styles = StyleSheet.create({
         color: '#333333',
         marginBottom: 5,
     },
+    cell: {
+        flexDirection: "row",
+        alignItems: "center",
+        width: ScreenWidth,
+        borderBottomWidth: 1,
+        borderBottomColor: 'black'
+    }
 });
