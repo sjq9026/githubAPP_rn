@@ -45,9 +45,9 @@ export default class DataUtil {
 
 
 
-    saveAllLanguage(data){
+     saveAllLanguage(data){
         AsyncStorage.setItem(FLAG.all_language,JSON.stringify(data),(error)=>{
-            alert("保存失败")
+            alert("保存成功")
         })
     }
 }

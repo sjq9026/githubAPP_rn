@@ -33,11 +33,14 @@ export default class CustomNavBar extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
-      <Image source={require("../../imgs/close_blue.png")} style={{height:25,width:25,marginLeft:20}}
-      onPress={()=>this.props.leftBtnClick}></Image>
+
+          <TouchableHighlight onPress={()=>this.props.leftBtnClick()}>
+
+      <Image source={require("../../imgs/close_blue.png")} style={{height:25,width:25,marginLeft:20}}></Image>
+          </TouchableHighlight>
         <Text style={{fontSize:18,color:"white"}}>{this.props.title}</Text>
 
-        <TouchableHighlight onPress={()=>this.props.rightBtnClick}>
+        <TouchableHighlight onPress={()=>this.props.rightBtnClick()}>
           <Text style={{marginRight:20,fontSize:16,color:"white"}}>{this.props.rightStr}</Text>
         </TouchableHighlight>
 

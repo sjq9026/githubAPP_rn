@@ -19,6 +19,7 @@ import {
 import  ScrollableTabView,{ScrollableTabBar,DefaultTabBar} from  "react-native-scrollable-tab-view";
 import NetUtil from "../Utils/NetUtil";
 import PopularItemView from "../../itemViews/PopularItemView";
+import  DataUtil ,{FLAG} from "../Utils/DataUtil"
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -35,14 +36,16 @@ var tabValue = ["Android","IOS","JAVA","JavaSript","Android","IOS","JAVA","JavaS
 export default class PopularTab extends Component<Props> {
     constructor(props){
         super(props);
+        this.du = new DataUtil(FLAG.all_language)
         this.state= {
             result:"",
-
-
+            tabValues:[]
         }
         this.renderTabItems = this.renderTabItems.bind(this);
+    }
 
-
+    componentDidMount() {
+        this.loadData();
     }
 
 
@@ -60,17 +63,35 @@ export default class PopularTab extends Component<Props> {
                              tabBarBackgroundColor={"#377DFE"}
                              tabBarActiveTextColor={"#E61A5F"}
                              tabBarInactiveTextColor={"white"}>
-              <PopularLabel tabLabel="IOS"/>
-              <PopularLabel tabLabel="Android"/>
-              <PopularLabel tabLabel="Java"/>
-              <PopularLabel tabLabel="IOS"/>
-              <PopularLabel tabLabel="IOS"/>
+              { this.state.tabValues.map((result,i,array)=>{
+                    let tab = array[i];
+                  return tab.checked ?  <PopularLabel key={i} tabLabel={tab.name}></PopularLabel> : null;
+              })}
+
+
+
+
+
+
           </ScrollableTabView>
 
 
 
       </View>
     );}
+
+
+    loadData() {
+        this.du.getAllLanguage()
+            .then(result => {
+                this.setState({
+                    tabValues: result
+                })
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }
 
     renderTabItems(){
       let length = tabValue.length;

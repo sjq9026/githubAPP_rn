@@ -13,7 +13,8 @@ import {
     ToastAndroid,
     Dimensions,
     ScrollView,
-    Image
+    Image,
+    Alert
 } from 'react-native';
 import CustomNavBar from "./CustomNavBar"
 import DataUtil, {FLAG} from "../Utils/DataUtil";
@@ -32,14 +33,16 @@ export default class CustomKeyPage extends Component<Props> {
         super();
         this.du = new DataUtil(FLAG.all_language);
         this.state = {
-            dataArray: []
+            dataArray: [],
+            changeValues:[]
         }
 
 
-        this.saveKey = this.saveKey.bind(this);
+
         this.gotoLastPage = this.gotoLastPage.bind(this);
         this.loadData = this.loadData.bind(this);
         this.renderKeyView = this.renderKeyView.bind(this);
+        this.saveKey = this.saveKey.bind(this);
     }
 
 
@@ -81,11 +84,28 @@ export default class CustomKeyPage extends Component<Props> {
 
 
     saveKey() {
+        this.du.saveAllLanguage(this.state.dataArray);
+        this.props.navigation.goBack()
         ToastAndroid.show("保存", 1000)
     }
 
     gotoLastPage() {
-        this.props.navigation.goBack()
+        if(this.state.changeValues.length === 0){
+            this.props.navigation.goBack();
+            return;
+        }
+        Alert.alert(
+            '提示',
+            '是否保存所做的修改？',
+            [
+
+                {text: '不保存', onPress: () => { this.props.navigation.goBack();}},
+                {text: '保存', onPress: () => {this.du.saveAllLanguage(this.state.dataArray); this.props.navigation.goBack();}},
+            ],
+            { cancelable: false }
+        )
+
+
     }
 
 
@@ -135,6 +155,15 @@ export default class CustomKeyPage extends Component<Props> {
 
     onClick(data) {
         data.checked = !data.checked;
+        var len = this.state.changeValues.length;
+        for(var i=0;i<len;i++){
+            if(this.state.changeValues[i] === data){
+                this.state.changeValues.splice(i,1);
+                return;
+            }
+        }
+
+        this.state.changeValues.push(data)
 
     }
 }
