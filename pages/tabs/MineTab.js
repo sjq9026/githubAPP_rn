@@ -26,9 +26,9 @@ export default class MineTab extends Component<Props> {
     return (
       <View style={styles.container}>
         <Button style={styles.welcome} title="点击设置标签" onPress={()=> this.props.navigation.navigate('CustomKeyPage')}>
-
         </Button>
-
+        <Button style={styles.welcome} title="拖拽排序" onPress={()=> this.props.navigation.navigate('SortKeyPage')}>
+        </Button>
       </View>
     );
   }

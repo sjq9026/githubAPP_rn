@@ -61,6 +61,7 @@ export default class CustomKeyPage extends Component<Props> {
             .catch(error => {
                 console.log(error)
             })
+        console.log("AAA","自定义标签页数据------>"+JSON.stringify(this.state.dataArray));
     }
 
     render() {
