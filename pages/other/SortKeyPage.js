@@ -80,6 +80,7 @@ export default class SortKeyPage extends Component<Props> {
     }
 
     render() {
+
         return (
             <View style={styles.container}>
                 <CustomNavBar

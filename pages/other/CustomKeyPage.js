@@ -19,6 +19,7 @@ import {
 import CustomNavBar from "./CustomNavBar"
 import DataUtil, {FLAG} from "../Utils/DataUtil";
 import CheckBox from 'react-native-check-box'
+import ArrayUtil from "../Utils/ArrayUtil";
 
 const instructions = Platform.select({
     ios: 'Press Cmd+R to reload,\n' +
@@ -34,9 +35,8 @@ export default class CustomKeyPage extends Component<Props> {
         this.du = new DataUtil(FLAG.all_language);
         this.state = {
             dataArray: [],
-            changeValues:[]
+            changeValues: []
         }
-
 
 
         this.gotoLastPage = this.gotoLastPage.bind(this);
@@ -61,37 +61,45 @@ export default class CustomKeyPage extends Component<Props> {
             .catch(error => {
                 console.log(error)
             })
-        console.log("AAA","自定义标签页数据------>"+JSON.stringify(this.state.dataArray));
+        console.log("AAA", "自定义标签页数据------>" + JSON.stringify(this.state.dataArray));
     }
 
     render() {
+        let title = this.props.navigation.state.params.isRemove ? "移除标签" : "自定义标签";
+        let right = this.props.navigation.state.params.isRemove ? "删除" : "保存";
         return (
             <View style={styles.container}>
                 <CustomNavBar
-                    title="自定义标签栏"
-                    rightStr="保存"
+                    title={title}
+                    rightStr={right}
                     leftBtnClick={this.gotoLastPage}
                     rightBtnClick={this.saveKey}
                 />
                 <ScrollView>
                     {this.renderKeyView()}
                 </ScrollView>
-
-
-
             </View>
         );
     }
 
 
     saveKey() {
-        this.du.saveAllLanguage(this.state.dataArray);
-        this.props.navigation.goBack()
-        ToastAndroid.show("保存", 1000)
+        if (this.props.navigation.state.params.isRemove) {
+            for (let i = 0, j = this.state.changeValues.length; i < j; i++) {
+                ArrayUtil.removeArray(this.state.dataArray, this.state.changeValues[i]);
+            }
+            this.du.saveAllLanguage(this.state.dataArray);
+            this.props.navigation.goBack();
+            ToastAndroid.show("删除后保存", 1000)
+        } else {
+            this.du.saveAllLanguage(this.state.dataArray);
+            this.props.navigation.goBack();
+            ToastAndroid.show("保存", 1000)
+        }
     }
 
     gotoLastPage() {
-        if(this.state.changeValues.length === 0){
+        if (this.state.changeValues.length === 0) {
             this.props.navigation.goBack();
             return;
         }
@@ -100,10 +108,18 @@ export default class CustomKeyPage extends Component<Props> {
             '是否保存所做的修改？',
             [
 
-                {text: '不保存', onPress: () => { this.props.navigation.goBack();}},
-                {text: '保存', onPress: () => {this.du.saveAllLanguage(this.state.dataArray); this.props.navigation.goBack();}},
+                {
+                    text: '不保存', onPress: () => {
+                    this.props.navigation.goBack();
+                }
+                },
+                {
+                    text: '保存', onPress: () => {
+                    this.saveKey()
+                }
+                },
             ],
-            { cancelable: false }
+            {cancelable: false}
         )
 
 
@@ -119,7 +135,7 @@ export default class CustomKeyPage extends Component<Props> {
                 <View key={i}>
                     <View style={styles.cell}>
                         {this.renderCheckBox(this.state.dataArray[i])}
-                        {this.renderCheckBox(this.state.dataArray[i+1])}
+                        {this.renderCheckBox(this.state.dataArray[i + 1])}
                     </View>
                 </View>
             )
@@ -139,27 +155,33 @@ export default class CustomKeyPage extends Component<Props> {
     }
 
 
-    renderCheckBox(data){
+    renderCheckBox(data) {
         console.log(JSON.stringify(data))
-        return(
-           <CheckBox
-               style={{flex:1,padding:10}}
-               onClick={()=>this.onClick(data)}
-               isChecked={data.checked}
-               isIndeterminate={false}
-               leftText={data.name}
-               checkedImage={<Image style={{tintColor:"#6495ED"}} source={require("../../imgs/ic_check_box.png")}/>}
-               unCheckedImage={<Image style={{tintColor:"#6495ED"}} source={require("../../imgs/ic_check_box_outline_blank.png")}/>}
-           />
+        let isCheck = this.props.navigation.state.params.isRemove ? false : data.checked;
+        return (
+            <CheckBox
+                style={{flex: 1, padding: 10}}
+                onClick={() => this.onClick(data)}
+                isChecked={isCheck}
+                isIndeterminate={false}
+                leftText={data.name}
+                checkedImage={<Image style={{tintColor: "#6495ED"}} source={require("../../imgs/ic_check_box.png")}/>}
+                unCheckedImage={<Image style={{tintColor: "#6495ED"}}
+                                       source={require("../../imgs/ic_check_box_outline_blank.png")}/>}
+            />
         )
     }
 
     onClick(data) {
-        data.checked = !data.checked;
+        //不是自定义标签页  不用改变标签状态，只添加就可以
+        if (!this.props.navigation.state.isRemove) {
+            data.checked = !data.checked;
+        }
+
         var len = this.state.changeValues.length;
-        for(var i=0;i<len;i++){
-            if(this.state.changeValues[i] === data){
-                this.state.changeValues.splice(i,1);
+        for (var i = 0; i < len; i++) {
+            if (this.state.changeValues[i] === data) {
+                this.state.changeValues.splice(i, 1);
                 return;
             }
         }

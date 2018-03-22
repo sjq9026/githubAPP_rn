@@ -8,10 +8,22 @@ export default class ArrayUtil {
                 newArr.push(arr[i]);
             }
             return newArr;
-        } else{
+        } else {
             return newArr;
         }
-}
+    }
+
+
+    static removeArray(arr1, item) {
+        if (arr1) {
+            for (let i = 0, j = arr1.length; i < j; i++) {
+                if (arr1[i] === item) {
+                    arr1.splice(i, 1);
+                }
+            }
+            return arr1;
+        }
+    }
 
 
 }
