@@ -160,7 +160,6 @@ class SortCell extends Component {
                 <Image source={require('../../imgs/ic_sort.png')}
                        style={{width: 24, height: 24, marginLeft: 15, tintColor: "#6495ED"}}/>
                 <Text style={styles.str}>{this.props.data.name}</Text>
-
             </View>
         </TouchableHighlight>
     }
