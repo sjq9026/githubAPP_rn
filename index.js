@@ -12,6 +12,7 @@ import SortKeyPage from "./pages/other/SortKeyPage";
 import PopularDetailPage from "./pages/tabs/PopularDetailPage";
 
 
+
 const tab = TabNavigator(
     {
         Popular: {
