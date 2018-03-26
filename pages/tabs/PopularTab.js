@@ -63,7 +63,7 @@ export default class PopularTab extends Component<Props> {
                     tabBarInactiveTextColor={"white"}>
                     {this.state.tabValues.map((result, i, array) => {
                         let tab = array[i];
-                        return tab.checked ? <PopularLabel key={i} tabLabel={tab.name}></PopularLabel> : null;
+                        return tab.checked ? <PopularLabel key={i} tabLabel={tab.name} {...this.props}></PopularLabel> : null;
                     })}
 
 
@@ -141,6 +141,7 @@ class PopularLabel extends Component {
 
     loadPopularData() {
         var netUrl = URL + this.props.tabLabel + QUERY_STR;
+        console.log(netUrl)
         DataUtil.getData(netUrl)
             .then((result) => {
                 let items = result && result.items ? result.items : result ? result : [];
@@ -195,7 +196,7 @@ class PopularLabel extends Component {
     }
 
     renderItemView(rowdata) {
-        return <PopularItemView data={rowdata} onSelect={this.props.onSelect()}/>
+        return <PopularItemView data={rowdata} onSelect={()=>this.props.navigation.navigate("PopularDetailPage",{data:rowdata})}/>
     }
 
 

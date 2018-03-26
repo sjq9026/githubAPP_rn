@@ -12,6 +12,7 @@ import {
     View,
     WebView
 } from 'react-native';
+import CustomNavBar from "../other/CustomNavBar";
 
 const instructions = Platform.select({
     ios: 'Press Cmd+R to reload,\n' +
@@ -21,13 +22,61 @@ const instructions = Platform.select({
 });
 
 export default class PopularDetailPage extends Component<Props> {
+    constructor(props) {
+        super(props);
+        this.state = {
+            url: this.props.navigation.state.params.data.html_url,
+            title: "",
+            canGoBack: false
+        }
+        console.log(this.props.navigation.state.params.data)
+    }
+
+
     render() {
         return (
             <View style={styles.container}>
-                <WebView source={{uri:"https://www.baidu.com"}}/>
+                <CustomNavBar
+                    leftBtnClick={() => {
+                        this.leftBtnClick()
+                    }}
+                    title={this.state.title}
+                    rightBtnClick={() => {
+                        this.rightBtnClick()
+                    }}
+                    rightStr=""
+                />
+
+
+                <WebView source={{uri: this.props.navigation.state.params.data.html_url}}
+                         ref="webview"
+                         onNavigationStateChange={(e) => {
+                             this.onWebViewStateChange(e)
+                         }}
+
+
+                />
             </View>
         );
     }
+
+    leftBtnClick() {
+        if (this.state.canGoBack) {
+            this.refs.webview.goBack();
+        }
+    }
+
+    rightBtnClick() {
+
+    }
+
+    onWebViewStateChange(e) {
+        this.setState({
+            canGoBack: e.canGoBack,
+        })
+    }
+
+
 }
 
 const styles = StyleSheet.create({
