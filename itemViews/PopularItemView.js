@@ -39,9 +39,9 @@ export default class PopularItemView extends Component<Props> {
                     this.props.onSelect()
                 }}>
 
-                    <View style={{flex:1}}>
+                    <View style={styles.content}>
                         <Text style={styles.title}>{this.props.data.full_name}</Text>
-                        <Text style={styles.content}>{this.props.data.description}</Text>
+                        <Text style={styles.info}>{this.props.data.description}</Text>
                         <View style={{
                             height: 30,
                             flexDirection: "row",
@@ -49,8 +49,8 @@ export default class PopularItemView extends Component<Props> {
                             alignItems: "center"
                         }}>
                             <View style={styles.line}>
-                                <Text>Author:</Text>
-                                <Image style={{width: 20, height: 20}}
+                                <Text style={{color:"black"}}>Author:</Text>
+                                <Image style={{width: 18, height: 18}}
                                        source={{uri: "https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1521793086&di=7de9d4f6004e614ad61ac44987c05654&src=http://img.juweixin.com/uploads/weixin/2016/1210/1612100902468509.jpg"}}/>
                             </View>
 
@@ -58,12 +58,9 @@ export default class PopularItemView extends Component<Props> {
                                 <Text style={{fontSize: 16, color: "black"}}>start:</Text>
                                 <Text style={{alignItems: 'center'}}>{this.props.data.stargazers_count}</Text>
                             </View>
-                            <Image style={{width: 20, height: 20}} source={require('../imgs/ic_star.png')}/>
+                            <Image style={{width: 18, height: 18}} source={require('../imgs/ic_star.png')}/>
                         </View>
 
-                        <Text style={{width: width - 20, height: 2, backgroundColor: 'gray', alignSelf: "center"}}>
-
-                        </Text>
                     </View>
                 </TouchableHighlight>
 
@@ -85,13 +82,24 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: "black"
     },
-    content: {
+    info: {
         fontSize: 14,
         color: "gray"
     },
     line: {
         flexDirection: "row",
         alignItems: 'center'
+    },
+    content:{
+        backgroundColor:"white",
+        padding:10,
+        borderWidth:1,
+        shadowColor:'gray',
+        borderColor:'#dddddd',
+        shadowOffset:{width:1,height:1},
+        shadowOpacity:0.4,
+        shadowRadius:20,
+        elevation:2
     }
 
 
