@@ -9,6 +9,7 @@ import MineTab from "./pages/tabs/MineTab";
 import WelcomePage from "./pages/WelcomePage";
 import CustomKeyPage from "./pages/other/CustomKeyPage";
 import SortKeyPage from "./pages/other/SortKeyPage";
+import PopularDetailPage from "./pages/tabs/PopularDetailPage";
 
 
 const tab = TabNavigator(
@@ -119,6 +120,12 @@ const pages = StackNavigator(
         },
         SortKeyPage: {
             screen: SortKeyPage,
+            navigationOptions: {
+                header: null,
+            }
+        },
+        PopularDetailPage: {
+            screen: PopularDetailPage,
             navigationOptions: {
                 header: null,
             }

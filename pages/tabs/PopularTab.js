@@ -95,6 +95,10 @@ export default class PopularTab extends Component<Props> {
         }
         return views;
     }
+
+    onItemSelect(rowdata){
+        this.props.navigate("PopularDetailPage",{url:"https://www.imooc.com/u/4146209"})
+    }
 }
 
 class PopularLabel extends Component {
@@ -191,8 +195,11 @@ class PopularLabel extends Component {
     }
 
     renderItemView(rowdata) {
-        return <PopularItemView data={rowdata}/>
+        return <PopularItemView data={rowdata} onSelect={this.props.onSelect()}/>
     }
+
+
+
 
 
 }
