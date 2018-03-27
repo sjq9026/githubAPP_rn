@@ -1,4 +1,5 @@
 import keys from '../../res/data/keys.json'
+import language from '../../res/data/langs.json';
 import {AsyncStorage} from "react-native"
 import React from 'react';
 
@@ -18,16 +19,15 @@ export default class DataUtil {
         console.log(this.flag)
         return new Promise((resolve, reject) => {
             AsyncStorage.getItem(this.flag, (error, result) => {
-                console.log("1111")
                 console.log(this.flag)
                 if (error) {
                     reject(error);
                     return;
                 }
                 if (!result) {
-                    var data = this.flag === FLAG.all_language ? keys : null;
+                    var data = this.flag === FLAG.hot_language ? keys : language;
                     console.log(JSON.stringify(data))
-                    this.saveAllLanguage(data);
+                    this.saveLanguage(this.flag,data);
                     resolve(data);
                 } else {
                     try {
@@ -43,8 +43,8 @@ export default class DataUtil {
     }
 
 
-    saveAllLanguage(data) {
-        AsyncStorage.setItem(FLAG.all_language, JSON.stringify(data), (error) => {
+    saveLanguage(flag,data) {
+        AsyncStorage.setItem(flag, JSON.stringify(data), (error) => {
             alert("保存成功")
         })
     }

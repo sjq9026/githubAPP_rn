@@ -32,7 +32,7 @@ export default class CustomKeyPage extends Component<Props> {
 
     constructor(props) {
         super();
-        this.du = new DataUtil(FLAG.all_language);
+        this.du = new DataUtil(FLAG.hot_language);
         this.state = {
             dataArray: [],
             changeValues: []

@@ -36,7 +36,7 @@ var tabValue = ["Android", "IOS", "JAVA", "JavaSript", "Android", "IOS", "JAVA",
 export default class PopularTab extends Component<Props> {
     constructor(props) {
         super(props);
-        this.du = new DataUtil(FLAG.all_language)
+        this.du = new DataUtil(FLAG.hot_language)
         this.state = {
             result: "",
             tabValues: []
@@ -54,16 +54,20 @@ export default class PopularTab extends Component<Props> {
             <View style={stys.container}>
                 <ScrollableTabView
                     renderTabBar={() => <ScrollableTabBar/>}
-                    initialPage={1}
+                    initialPage={0}
                     locked={false}
                     scrollWithoutAnimation={true}
                     tabBarUnderlineStyle={stys.lineStyle}
                     tabBarBackgroundColor={"#377DFE"}
                     tabBarActiveTextColor={"#E61A5F"}
-                    tabBarInactiveTextColor={"white"}>
+                    tabBarInactiveTextColor={"white"}
+                    tabBarTextStyle={{textAlign:'center'}}>
                     {this.state.tabValues.map((result, i, array) => {
                         let tab = array[i];
-                        return tab.checked ? <PopularLabel key={i} tabLabel={tab.name} {...this.props}></PopularLabel> : null;
+                        return tab.checked ?
+                            <PopularLabel key={i} tabLabel={tab.name} {...this.props} style={{textAlign: 'center'}}>
+
+                            </PopularLabel> : null;
                     })}
 
 
@@ -96,8 +100,8 @@ export default class PopularTab extends Component<Props> {
         return views;
     }
 
-    onItemSelect(rowdata){
-        this.props.navigate("PopularDetailPage",{url:"https://www.imooc.com/u/4146209"})
+    onItemSelect(rowdata) {
+        this.props.navigate("PopularDetailPage", {url: "https://www.imooc.com/u/4146209"})
     }
 }
 
@@ -196,11 +200,9 @@ class PopularLabel extends Component {
     }
 
     renderItemView(rowdata) {
-        return <PopularItemView data={rowdata} onSelect={()=>this.props.navigation.navigate("PopularDetailPage",{data:rowdata})}/>
+        return <PopularItemView data={rowdata}
+                                onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata})}/>
     }
-
-
-
 
 
 }
@@ -221,6 +223,7 @@ const stys = StyleSheet.create({
         marginBottom: 5,
     },
     lineStyle: {
+
         height: 2,
         backgroundColor: '#FF0000',
     },

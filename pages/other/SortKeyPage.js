@@ -34,7 +34,7 @@ var ScreenWidth = Dimensions.get('window').width;
 export default class SortKeyPage extends Component<Props> {
     constructor(props) {
         super();
-        this.du = new DataUtil(FLAG.all_language);
+        this.du = new DataUtil(FLAG.hot_language);
         this.sortResultArray = [];
         this.state = {
             dataArray: [],
