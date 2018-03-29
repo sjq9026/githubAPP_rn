@@ -30,6 +30,8 @@ import {
     MenuTrigger,
 } from 'react-native-popup-menu';
 import TrendingItemView from "../../itemViews/TrendingItemView";
+import {NET_FLAG} from "../Utils/NetUtil";
+import TimeSpan from "../other/TimeSpan";
 
 const API_URL = 'https://github.com/trending/'
 const instructions = Platform.select({
@@ -39,14 +41,16 @@ const instructions = Platform.select({
     'Shake or press menu button for dev menu',
 });
 
-type Props = {};
+
+let TimeSpans = [new TimeSpan("今天", "since=daily"), new TimeSpan("本周", "since=weekly"), new TimeSpan("本月", "since=monthly")];
 const width = Dimensions.get("window").width;
 export default class TrendingTab extends Component<Props> {
     constructor(props) {
         super(props);
-        this.du = new DataUtil(FLAG.all_language)
+        this.du = new DataUtil(FLAG.all_language, NET_FLAG.Trending);
         this.state = {
             result: "",
+            TimeSpan: TimeSpans[0],
             tabValues: []
         }
     }
@@ -77,7 +81,24 @@ export default class TrendingTab extends Component<Props> {
                         <Image source={require("../../imgs/ic_arrow_back_white_36pt.png")}
                                style={{height: 25, width: 25, marginLeft: 20}}>
                         </Image>
-                        <Text style={{color: "white", fontSize: 16}}>Trending</Text>
+
+
+                        <Menu onSelect={value => this.onMenuSelected(value)}>
+                            <MenuTrigger text={this.state.TimeSpan.showText}
+                                         customStyles={customStyles={ triggerText: styles.popsel }}/>
+                            <MenuOptions>
+                                <MenuOption value={1} >
+                                    <Text style={{color: 'red', fontSize: 16}}>{TimeSpans[0].showText}</Text>
+                                </MenuOption>
+                                <MenuOption value={2}>
+                                    <Text style={{color: 'red', fontSize: 16}}>{TimeSpans[1].showText}</Text>
+                                </MenuOption>
+                                <MenuOption value={3}>
+                                    <Text style={{color: 'red', fontSize: 16}}>{TimeSpans[2].showText}</Text>
+                                </MenuOption>
+                            </MenuOptions>
+                        </Menu>
+
 
                         <Image source={require("../../imgs/ic_more_vert_white_48pt.png")}
                                style={{height: 25, width: 25, marginLeft: 20}}>
@@ -94,7 +115,7 @@ export default class TrendingTab extends Component<Props> {
                         tabBarBackgroundColor={"#377DFE"}
                         tabBarActiveTextColor={"#E61A5F"}
                         tabBarInactiveTextColor={"white"}
-                        tabBarTextStyle={{textAlign:'center',width:width/4}}>
+                        tabBarTextStyle={{textAlign: 'center', width: width / 4}}>
 
                         {this.state.tabValues.map((result, i, array) => {
                             let tab = array[i];
@@ -107,26 +128,18 @@ export default class TrendingTab extends Component<Props> {
                     </ScrollableTabView>
 
 
-                    <Menu onSelect={value => alert(`Selected number: ${value}`)}>
-                        <MenuTrigger text="点击可以弹出下拉菜单" style={{borderWidth: 1, borderColor: "blue"}}/>
-                        <MenuOptions>
-                            <MenuOption value={1}>
-                                <Text style={{color: 'red', fontSize: 16}}>Two</Text>
-                            </MenuOption>
-                            <MenuOption value={2}>
-                                <Text style={{color: 'red', fontSize: 16}}>Two</Text>
-                            </MenuOption>
-                            <MenuOption value={3}>
-                                <Text style={{color: 'red', fontSize: 16}}>Two</Text>
-                            </MenuOption>
-                        </MenuOptions>
-                    </Menu>
-
-
                 </View>
             </MenuProvider>
         );
 
+
+    }
+
+
+    onMenuSelected(value) {
+        this.setState({
+            TimeSpan: TimeSpans[value - 1]
+        })
 
     }
 
@@ -229,7 +242,7 @@ class TrendingLabel extends Component {
 
     renderItemView(rowdata) {
         return <TrendingItemView data={rowdata}
-                                onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata})}/>
+                                 onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata})}/>
     }
 
 
@@ -263,8 +276,19 @@ const styles = StyleSheet.create({
         backgroundColor: "#377DFE"
     },
     lineStyle: {
-        width:width/4,
+        width: width / 4,
         height: 2,
         backgroundColor: '#FF0000',
     },
+    popsel:{
+        width:50,
+        borderWidth:1,
+        borderColor:"white",
+       paddingTop:5,
+        paddingBottom:5,
+        paddingLeft:10,
+        paddingRight:10,
+        borderRadius:5,
+        color:"white"
+    }
 });

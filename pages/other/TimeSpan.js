@@ -1,4 +1,6 @@
-export default function TimeSpan(showStr, searchStr) {
-    this.showStr = showStr;
-    this.searchStr = searchStr;
+export default function TimeSpan(showText,searchText){
+    this.showText=showText;
+    this.searchText=searchText;
+
+
 }

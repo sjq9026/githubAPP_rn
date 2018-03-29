@@ -20,6 +20,7 @@ import ScrollableTabView, {ScrollableTabBar, DefaultTabBar} from "react-native-s
 import NetUtil from "../Utils/NetUtil";
 import PopularItemView from "../../itemViews/PopularItemView";
 import DataUtil, {FLAG} from "../Utils/DataUtil"
+import {NET_FLAG} from "../Utils/NetUtil";
 
 const instructions = Platform.select({
     ios: 'Press Cmd+R to reload,\n' +
@@ -36,7 +37,7 @@ var tabValue = ["Android", "IOS", "JAVA", "JavaSript", "Android", "IOS", "JAVA",
 export default class PopularTab extends Component<Props> {
     constructor(props) {
         super(props);
-        this.du = new DataUtil(FLAG.hot_language)
+        this.du = new DataUtil(FLAG.hot_language,NET_FLAG.Popular)
         this.state = {
             result: "",
             tabValues: []

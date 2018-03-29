@@ -1,21 +1,51 @@
 import DataUtil from "./DataUtil";
+import Trending from "GitHubTrending";
+
+export const NET_FLAG = {Popular: "popular", Trending: "trending"};
 
 export default class NetUtil {
-    static get(url) {
-        //先从本地获取数据，本地无数据或者超时再从网络获取数据
+
+    constructor(flag) {
+        this.flag = flag;
+        this.trending = null;
+    }
+
+
+    static get(url, netFlag) {
         return new Promise((resolve, reject) => {
-            fetch(url)
-                .then((response) => response.json())
-                .catch((error) => {
-                    reject(error);
-                }).then((responseData) => {
-                if (!responseData) {
-                    reject(new Error("Response is null"))
+            if (netFlag === NET_FLAG.Popular) {
+                fetch(url)
+                    .then((response) => response.json())
+                    .catch((error) => {
+                        reject(error);
+                    }).then((responseData) => {
+                    if (!responseData) {
+                        reject(new Error("Response is null"))
+                    }
+                    resolve(responseData);
+                    DataUtil.saveNetData(url, responseData.items);
+                })
+            } else {
+                if (this.trending === null) {
+                    this.trending = new Trending();
                 }
-                resolve(responseData);
-                DataUtil.saveNetData(url, responseData.items);
-            })
+                this.trending.fetchTrending(url)
+                    .then(items => {
+                        if (!items) {
+                            reject(new Error("获取网络Trending数据失败"))
+                            return;
+                        }
+                        resolve(items);
+                        DataUtil.saveNetData(url, items)
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    })
+
+            }
+
         })
+
 
     }
 

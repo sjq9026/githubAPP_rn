@@ -2,6 +2,7 @@ import keys from '../../res/data/keys.json'
 import language from '../../res/data/langs.json';
 import {AsyncStorage} from "react-native"
 import React from 'react';
+import {NET_FLAG} from "./NetUtil";
 
 import ReactNative from 'react-native';
 import NetUtil from "./NetUtil";
@@ -10,8 +11,9 @@ export const FLAG = {all_language: "all_language", hot_language: "hot_language"}
 export default class DataUtil {
 
 
-    constructor(flag) {
+    constructor(flag, netFlag) {
         this.flag = flag;
+        this.netFlag = netFlag;
     }
 
 
@@ -27,7 +29,7 @@ export default class DataUtil {
                 if (!result) {
                     var data = this.flag === FLAG.hot_language ? keys : language;
                     console.log(JSON.stringify(data))
-                    this.saveLanguage(this.flag,data);
+                    this.saveLanguage(this.flag, data);
                     resolve(data);
                 } else {
                     try {
@@ -43,7 +45,7 @@ export default class DataUtil {
     }
 
 
-    saveLanguage(flag,data) {
+    saveLanguage(flag, data) {
         AsyncStorage.setItem(flag, JSON.stringify(data), (error) => {
             alert("保存成功")
         })
@@ -57,7 +59,7 @@ export default class DataUtil {
                         if (result) {
                             resolve(result)
                         } else {
-                            NetUtil.get(url)
+                            NetUtil.get(url,this.netFlag)
                                 .then(result => {
                                     resolve(result)
                                 })
@@ -67,7 +69,7 @@ export default class DataUtil {
                         }
                     })
                     .catch(error => {
-                        NetUtil.get(url)
+                        NetUtil.get(url,this.netFlag)
                             .then(result => {
                                 resolve(result)
                             })
@@ -87,14 +89,14 @@ export default class DataUtil {
     static getLocalData(url) {
         return new Promise((resolve, reject) => {
             AsyncStorage.getItem(url, (error, result) => {
-                    resolve(result);
+                resolve(result);
             })
         })
     }
 
     static saveNetData(url, items) {
         return new Promise((resolve, reject) => {
-            let data = {items:items,updateTime:new Date().getTime()};
+            let data = {items: items, updateTime: new Date().getTime()};
             AsyncStorage.setItem(url, JSON.stringify(data), (error) => {
                 alert("保存网络数据失败")
             })
