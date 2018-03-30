@@ -5,7 +5,14 @@
  */
 
 import React, {Component} from 'react';
-import {MenuProvider} from 'react-native-popup-menu';
+import {
+    Menu,
+    MenuProvider,
+    MenuOptions,
+    MenuTrigger,
+    renderers,
+    MenuOption
+} from 'react-native-popup-menu';
 import DataUtil, {FLAG} from "../Utils/DataUtil"
 import {
     Platform,
@@ -23,12 +30,7 @@ import {
     ActivityIndicator,
 } from 'react-native';
 import ScrollableTabView, {ScrollableTabBar, DefaultTabBar} from "react-native-scrollable-tab-view";
-import {
-    Menu,
-    MenuOptions,
-    MenuOption,
-    MenuTrigger,
-} from 'react-native-popup-menu';
+
 import TrendingItemView from "../../itemViews/TrendingItemView";
 import {NET_FLAG} from "../Utils/NetUtil";
 import TimeSpan from "../other/TimeSpan";
@@ -41,7 +43,7 @@ const instructions = Platform.select({
     'Shake or press menu button for dev menu',
 });
 
-
+const { Popover } = renderers
 let TimeSpans = [new TimeSpan("今天", "since=daily"), new TimeSpan("本周", "since=weekly"), new TimeSpan("本月", "since=monthly")];
 const width = Dimensions.get("window").width;
 export default class TrendingTab extends Component<Props> {
@@ -75,7 +77,7 @@ export default class TrendingTab extends Component<Props> {
 
     render() {
         return (
-            <MenuProvider style={{flex: 1}}>
+            <MenuProvider style={{flex: 1}} customStyles={{backdrop:styles.bg}}>
                 <View style={styles.container}>
                     <View style={styles.title}>
                         <Image source={require("../../imgs/ic_arrow_back_white_36pt.png")}
@@ -83,21 +85,25 @@ export default class TrendingTab extends Component<Props> {
                         </Image>
 
 
-                        <Menu onSelect={value => this.onMenuSelected(value)}>
+
+
+                        <Menu renderer={Popover} rendererProps={{ preferredPlacement: 'bottom' }}>
                             <MenuTrigger text={this.state.TimeSpan.showText}
-                                         customStyles={customStyles={ triggerText: styles.popsel }}/>
-                            <MenuOptions>
-                                <MenuOption value={1} >
-                                    <Text style={{color: 'red', fontSize: 16}}>{TimeSpans[0].showText}</Text>
+                                         customStyles={customStyles = {triggerText: styles.popsel}}/>
+                            <MenuOptions customStyles={{optionText: styles.option,optionsWrapper:styles.optionContent}}>
+                                <MenuOption value={1}>
+                                    <Text style={{color: 'white', fontSize: 16,flex:1,textAlign:"center"}}>{TimeSpans[0].showText}</Text>
                                 </MenuOption>
                                 <MenuOption value={2}>
-                                    <Text style={{color: 'red', fontSize: 16}}>{TimeSpans[1].showText}</Text>
+                                    <Text style={{color: 'white', fontSize: 16,flex:1,textAlign:"center"}}>{TimeSpans[1].showText}</Text>
                                 </MenuOption>
                                 <MenuOption value={3}>
-                                    <Text style={{color: 'red', fontSize: 16}}>{TimeSpans[2].showText}</Text>
+                                    <Text style={{color: 'white', fontSize: 16,flex:1,textAlign:"center"}}>{TimeSpans[2].showText}</Text>
                                 </MenuOption>
                             </MenuOptions>
                         </Menu>
+
+
 
 
                         <Image source={require("../../imgs/ic_more_vert_white_48pt.png")}
@@ -149,6 +155,7 @@ export default class TrendingTab extends Component<Props> {
 class TrendingLabel extends Component {
     constructor(props) {
         super(props);
+        this.dd = new DataUtil(FLAG.all_language, NET_FLAG.Trending);
         this.state = {
             refreshing: false,
             loadingMore: false,
@@ -187,7 +194,7 @@ class TrendingLabel extends Component {
     loadPopularData() {
         var netUrl = API_URL + this.props.tabLabel + "?" + "since=daily";
         console.log(netUrl)
-        DataUtil.getData(netUrl)
+        this.dd.getData(netUrl)
             .then((result) => {
                 let items = result && result.items ? result.items : result ? result : [];
                 if (result && result.updateTime && !DataUtil.checkDate(result.updateTime)) {
@@ -280,15 +287,31 @@ const styles = StyleSheet.create({
         height: 2,
         backgroundColor: '#FF0000',
     },
-    popsel:{
-        width:50,
-        borderWidth:1,
-        borderColor:"white",
-       paddingTop:5,
-        paddingBottom:5,
-        paddingLeft:10,
-        paddingRight:10,
-        borderRadius:5,
-        color:"white"
+    popsel: {
+        width: 50,
+        borderWidth: 1,
+        borderColor: "white",
+        paddingTop: 5,
+        paddingBottom: 5,
+        paddingLeft: 10,
+        paddingRight: 10,
+        borderRadius: 5,
+        color: "white"
+    },
+    option: {
+        fontSize: 16,
+        color:"#377DFE",
+        width: 100,
+        textAlign:"center",
+        backgroundColor:'#377DFE'
+    },
+    optionContent:{
+        color:"#377DFE",
+        width: 80,
+        textAlign:'center',
+        backgroundColor:'#377DFE'
+    },
+    bg:{
+        backgroundColor:"white"
     }
 });

@@ -37,7 +37,7 @@ var tabValue = ["Android", "IOS", "JAVA", "JavaSript", "Android", "IOS", "JAVA",
 export default class PopularTab extends Component<Props> {
     constructor(props) {
         super(props);
-        this.du = new DataUtil(FLAG.hot_language,NET_FLAG.Popular)
+        this.du = new DataUtil(FLAG.hot_language, NET_FLAG.Popular)
         this.state = {
             result: "",
             tabValues: []
@@ -62,7 +62,7 @@ export default class PopularTab extends Component<Props> {
                     tabBarBackgroundColor={"#377DFE"}
                     tabBarActiveTextColor={"#E61A5F"}
                     tabBarInactiveTextColor={"white"}
-                    tabBarTextStyle={{textAlign:'center'}}>
+                    tabBarTextStyle={{textAlign: 'center'}}>
                     {this.state.tabValues.map((result, i, array) => {
                         let tab = array[i];
                         return tab.checked ?
@@ -109,6 +109,7 @@ export default class PopularTab extends Component<Props> {
 class PopularLabel extends Component {
     constructor(props) {
         super(props);
+        this.dd = new DataUtil(FLAG.hot_language, NET_FLAG.Popular);
         this.state = {
             refreshing: false,
             loadingMore: false,
@@ -147,19 +148,21 @@ class PopularLabel extends Component {
     loadPopularData() {
         var netUrl = URL + this.props.tabLabel + QUERY_STR;
         console.log(netUrl)
-        DataUtil.getData(netUrl)
+        this.dd.getData(netUrl)
             .then((result) => {
                 let items = result && result.items ? result.items : result ? result : [];
+                console.log(JSON.stringify(items))
                 if (result && result.updateTime && !DataUtil.checkDate(result.updateTime)) {
-                    return NetUtil.get(url);
-                } else {
-                    this.setState({
-                        dataSource: this.state.dataSource.cloneWithRows(items),
-                    })
+                    return NetUtil.get(url, NET_FLAG.Popular);
                 }
+                this.setState({
+                    dataSource: this.state.dataSource.cloneWithRows(items),
+                })
+
             })
             .then(result => {
                 if (result && result.items) {
+                    console.log("网络数据----->"+JSON.stringify(items))
                     this.setState({
                         dataSource: this.state.dataSource.cloneWithRows(result.items),
                     })

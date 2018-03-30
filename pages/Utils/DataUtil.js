@@ -51,17 +51,19 @@ export default class DataUtil {
         })
     }
 
-    static getData(url) {
+    getData(url) {
         //先从本地获取数据
         return new Promise((resolve, reject) => {
                 this.getLocalData(url)
                     .then(result => {
                         if (result) {
                             resolve(result)
+                            console.log("数据来源于本地")
                         } else {
-                            NetUtil.get(url,this.netFlag)
+                            NetUtil.get(url, this.netFlag)
                                 .then(result => {
                                     resolve(result)
+                                    console.log("数据来源于网络")
                                 })
                                 .catch(error => {
                                     resolve(error)
@@ -69,14 +71,17 @@ export default class DataUtil {
                         }
                     })
                     .catch(error => {
-                        NetUtil.get(url,this.netFlag)
+                        NetUtil.get(url, this.netFlag)
                             .then(result => {
                                 resolve(result)
+                                console.log("数据来源于网络")
                             })
                             .catch(error => {
                                 resolve(error)
                             })
                     })
+
+
             }
         )
     }
@@ -86,7 +91,7 @@ export default class DataUtil {
      * @param url
      * @returns {Promise}
      */
-    static getLocalData(url) {
+    getLocalData(url) {
         return new Promise((resolve, reject) => {
             AsyncStorage.getItem(url, (error, result) => {
                 resolve(result);
