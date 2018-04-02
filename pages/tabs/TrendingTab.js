@@ -43,7 +43,7 @@ const instructions = Platform.select({
     'Shake or press menu button for dev menu',
 });
 
-const { Popover } = renderers
+const {Popover} = renderers
 let TimeSpans = [new TimeSpan("今天", "since=daily"), new TimeSpan("本周", "since=weekly"), new TimeSpan("本月", "since=monthly")];
 const width = Dimensions.get("window").width;
 export default class TrendingTab extends Component<Props> {
@@ -77,7 +77,7 @@ export default class TrendingTab extends Component<Props> {
 
     render() {
         return (
-            <MenuProvider style={{flex: 1}} customStyles={{backdrop:styles.bg}}>
+            <MenuProvider style={{flex: 1}} customStyles={{backdrop: styles.bg}}>
                 <View style={styles.container}>
                     <View style={styles.title}>
                         <Image source={require("../../imgs/ic_arrow_back_white_36pt.png")}
@@ -85,25 +85,37 @@ export default class TrendingTab extends Component<Props> {
                         </Image>
 
 
-
-
-                        <Menu renderer={Popover} rendererProps={{ preferredPlacement: 'bottom' }}>
+                        <Menu renderer={Popover} rendererProps={{preferredPlacement: 'bottom'}}>
                             <MenuTrigger text={this.state.TimeSpan.showText}
                                          customStyles={customStyles = {triggerText: styles.popsel}}/>
-                            <MenuOptions customStyles={{optionText: styles.option,optionsWrapper:styles.optionContent}}>
+                            <MenuOptions
+                                customStyles={{optionText: styles.option, optionsWrapper: styles.optionContent}}>
                                 <MenuOption value={1}>
-                                    <Text style={{color: 'white', fontSize: 16,flex:1,textAlign:"center"}}>{TimeSpans[0].showText}</Text>
+                                    <Text style={{
+                                        color: 'white',
+                                        fontSize: 16,
+                                        flex: 1,
+                                        textAlign: "center"
+                                    }}>{TimeSpans[0].showText}</Text>
                                 </MenuOption>
                                 <MenuOption value={2}>
-                                    <Text style={{color: 'white', fontSize: 16,flex:1,textAlign:"center"}}>{TimeSpans[1].showText}</Text>
+                                    <Text style={{
+                                        color: 'white',
+                                        fontSize: 16,
+                                        flex: 1,
+                                        textAlign: "center"
+                                    }}>{TimeSpans[1].showText}</Text>
                                 </MenuOption>
                                 <MenuOption value={3}>
-                                    <Text style={{color: 'white', fontSize: 16,flex:1,textAlign:"center"}}>{TimeSpans[2].showText}</Text>
+                                    <Text style={{
+                                        color: 'white',
+                                        fontSize: 16,
+                                        flex: 1,
+                                        textAlign: "center"
+                                    }}>{TimeSpans[2].showText}</Text>
                                 </MenuOption>
                             </MenuOptions>
                         </Menu>
-
-
 
 
                         <Image source={require("../../imgs/ic_more_vert_white_48pt.png")}
@@ -197,7 +209,19 @@ class TrendingLabel extends Component {
         this.dd.getData(netUrl)
             .then((result) => {
                 let items = result && result.items ? result.items : result ? result : [];
-                if (result && result.updateTime && !DataUtil.checkDate(result.updateTime)) {
+                if (result) {
+                    console.log("result====true")
+                }else{
+                    console.log("result====false")
+                }
+
+                if (result.updateTime) {
+                    console.log("result.updateTime====true")
+                }else{
+                    console.log("result.updateTime====false")
+                }
+
+                if (result && result.updateTime && !this.dd.checkDate(result.updateTime)) {
                     return NetUtil.get(url);
                 } else {
                     this.setState({
@@ -300,18 +324,18 @@ const styles = StyleSheet.create({
     },
     option: {
         fontSize: 16,
-        color:"#377DFE",
+        color: "#377DFE",
         width: 100,
-        textAlign:"center",
-        backgroundColor:'#377DFE'
+        textAlign: "center",
+        backgroundColor: '#377DFE'
     },
-    optionContent:{
-        color:"#377DFE",
+    optionContent: {
+        color: "#377DFE",
         width: 80,
-        textAlign:'center',
-        backgroundColor:'#377DFE'
+        textAlign: 'center',
+        backgroundColor: '#377DFE'
     },
-    bg:{
-        backgroundColor:"white"
+    bg: {
+        backgroundColor: "white"
     }
 });

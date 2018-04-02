@@ -57,7 +57,7 @@ export default class DataUtil {
                 this.getLocalData(url)
                     .then(result => {
                         if (result) {
-                            resolve(result)
+                            resolve(JSON.parse(result))
                             console.log("数据来源于本地")
                         } else {
                             NetUtil.get(url, this.netFlag)
@@ -103,23 +103,29 @@ export default class DataUtil {
         return new Promise((resolve, reject) => {
             let data = {items: items, updateTime: new Date().getTime()};
             AsyncStorage.setItem(url, JSON.stringify(data), (error) => {
-                alert("保存网络数据失败")
+                alert("保存网络数据成功")
             })
         })
     }
 
     /**
      * 检查现在的时间和传入的时间相差是否大于4个小时，大于的话 返回false  小于4小时 返回true
-     * @param long
+     * @param longTime
      * @returns {boolean}
      */
-    static checkDate(long) {
-        let cDate = new Date();
+     checkDate(longTime) {
+       /* let cDate = new Date();
         let tDate = new Date();
         tDate.setDate(long);
         if (cDate.getMonth() !== tDate.getMonth()) return false;
         if (cDate.getDate() !== tDate.getMonth()) return false;
-        if (cDate.getHours() - tDate.getHours() > 4) return false;
+        if (cDate.getHours() - tDate.getHours() > 4) return false;*/
+        let currentDate = new Date();
+        let targetDate = new Date();
+        targetDate.setTime(longTime);
+        if (currentDate.getMonth() !== targetDate.getMonth())return false;
+        if (currentDate.getDate() !== targetDate.getDate())return false;
+        if (currentDate.getHours() - targetDate.getHours() > 4)return false;
         return true;
 
 

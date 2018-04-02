@@ -26,9 +26,7 @@ export default class NetUtil {
                     DataUtil.saveNetData(url, responseData.items);
                 })
             } else {
-                if (this.trending === null) {
-                    this.trending = new Trending();
-                }
+                this.trending = new Trending();
                 this.trending.fetchTrending(url)
                     .then(items => {
                         if (!items) {

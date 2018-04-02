@@ -150,9 +150,10 @@ class PopularLabel extends Component {
         console.log(netUrl)
         this.dd.getData(netUrl)
             .then((result) => {
-                let items = result && result.items ? result.items : result ? result : [];
-                console.log(JSON.stringify(items))
-                if (result && result.updateTime && !DataUtil.checkDate(result.updateTime)) {
+                let items = result && result.items ? result.items : [];
+
+                console.log(result.updateTime)
+                if (result && result.updateTime && !this.dd.checkDate(result.updateTime)) {
                     return NetUtil.get(url, NET_FLAG.Popular);
                 }
                 this.setState({
@@ -162,9 +163,9 @@ class PopularLabel extends Component {
             })
             .then(result => {
                 if (result && result.items) {
-                    console.log("网络数据----->"+JSON.stringify(items))
+                    console.log("网络数据----->" + JSON.stringify(items))
                     this.setState({
-                        dataSource: this.state.dataSource.cloneWithRows(result.items),
+                        dataSource: this.state.dataSource.cloneWithRows(JSON.parse(result.items)),
                     })
                 }
             })
