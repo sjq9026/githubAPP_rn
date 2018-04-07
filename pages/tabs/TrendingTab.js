@@ -43,7 +43,7 @@ const instructions = Platform.select({
     'Shake or press menu button for dev menu',
 });
 
-const {Popover} = renderers
+
 let TimeSpans = [new TimeSpan("今天", "since=daily"), new TimeSpan("本周", "since=weekly"), new TimeSpan("本月", "since=monthly")];
 const width = Dimensions.get("window").width;
 export default class TrendingTab extends Component<Props> {
@@ -55,6 +55,7 @@ export default class TrendingTab extends Component<Props> {
             TimeSpan: TimeSpans[0],
             tabValues: []
         }
+        this.onMenuSelected = this.onMenuSelected.bind(this)
     }
 
     componentDidMount() {
@@ -63,7 +64,7 @@ export default class TrendingTab extends Component<Props> {
 
 
     loadData() {
-        this.du.getAllLanguage()
+        this.du.getkeys()
             .then(result => {
                 this.setState({
                     tabValues: result
@@ -90,7 +91,7 @@ export default class TrendingTab extends Component<Props> {
                                          customStyles={customStyles = {triggerText: styles.popsel}}/>
                             <MenuOptions
                                 customStyles={{optionText: styles.option, optionsWrapper: styles.optionContent}}>
-                                <MenuOption value={1}>
+                                <MenuOption value={1} onSelect={() => this.onMenuSelected(1)}>
                                     <Text style={{
                                         color: 'white',
                                         fontSize: 16,
@@ -98,7 +99,7 @@ export default class TrendingTab extends Component<Props> {
                                         textAlign: "center"
                                     }}>{TimeSpans[0].showText}</Text>
                                 </MenuOption>
-                                <MenuOption value={2}>
+                                <MenuOption value={2} onSelect={() => this.onMenuSelected(2)}>
                                     <Text style={{
                                         color: 'white',
                                         fontSize: 16,
@@ -106,7 +107,7 @@ export default class TrendingTab extends Component<Props> {
                                         textAlign: "center"
                                     }}>{TimeSpans[1].showText}</Text>
                                 </MenuOption>
-                                <MenuOption value={3}>
+                                <MenuOption value={3} onSelect={() => this.onMenuSelected(3)}>
                                     <Text style={{
                                         color: 'white',
                                         fontSize: 16,
@@ -123,7 +124,7 @@ export default class TrendingTab extends Component<Props> {
                         </Image>
                     </View>
 
-
+                    <View style={{height: 1, width: width, backgroundColor: "white"}}/>
                     <ScrollableTabView
                         renderTabBar={() => <ScrollableTabBar/>}
                         initialPage={1}
@@ -137,7 +138,8 @@ export default class TrendingTab extends Component<Props> {
 
                         {this.state.tabValues.map((result, i, array) => {
                             let tab = array[i];
-                            return tab.checked ? <TrendingLabel key={i} tabLabel={tab.name} {...this.props}>
+                            return tab.checked ? <TrendingLabel key={i} tabLabel={tab.name}
+                                                                TimeSpan={this.state.TimeSpan}{...this.props}>
 
                             </TrendingLabel> : null;
                         })}
@@ -200,24 +202,30 @@ class TrendingLabel extends Component {
     }
 
     componentDidMount() {
-        this.loadPopularData();
+        this.loadPopularData(this.props.TimeSpan);
     }
 
-    loadPopularData() {
-        var netUrl = API_URL + this.props.tabLabel + "?" + "since=daily";
+    componentWillReceiveProps(nextProps) {
+        if (this.props.TimeSpan !== nextProps.TimeSpan) {
+            this.loadPopularData(nextProps.TimeSpan)
+        }
+    }
+
+    loadPopularData(ts) {
+        var netUrl = API_URL + this.props.tabLabel + "?" + ts.searchText;
         console.log(netUrl)
         this.dd.getData(netUrl)
             .then((result) => {
                 let items = result && result.items ? result.items : result ? result : [];
                 if (result) {
                     console.log("result====true")
-                }else{
+                } else {
                     console.log("result====false")
                 }
 
                 if (result.updateTime) {
                     console.log("result.updateTime====true")
-                }else{
+                } else {
                     console.log("result.updateTime====false")
                 }
 
@@ -313,6 +321,7 @@ const styles = StyleSheet.create({
     },
     popsel: {
         width: 50,
+        height: 30,
         borderWidth: 1,
         borderColor: "white",
         paddingTop: 5,
@@ -320,6 +329,8 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10,
         borderRadius: 5,
+        alignItems: 'center',
+        alignSelf: 'center',
         color: "white"
     },
     option: {

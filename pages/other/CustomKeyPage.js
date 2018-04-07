@@ -32,7 +32,7 @@ export default class CustomKeyPage extends Component<Props> {
 
     constructor(props) {
         super();
-        this.du = new DataUtil(FLAG.hot_language);
+        this.du = new DataUtil(props.navigation.state.params.languageFlag);
         this.state = {
             dataArray: [],
             changeValues: []
@@ -52,7 +52,7 @@ export default class CustomKeyPage extends Component<Props> {
 
 
     loadData() {
-        this.du.getAllLanguage()
+        this.du.getkeys()
             .then(result => {
                 this.setState({
                     dataArray: result
@@ -88,11 +88,11 @@ export default class CustomKeyPage extends Component<Props> {
             for (let i = 0, j = this.state.changeValues.length; i < j; i++) {
                 ArrayUtil.removeArray(this.state.dataArray, this.state.changeValues[i]);
             }
-            this.du.saveAllLanguage(this.state.dataArray);
+            this.du.saveLanguage(this.props.navigation.state.params.languageFlag,this.state.dataArray);
             this.props.navigation.goBack();
             ToastAndroid.show("删除后保存", 1000)
         } else {
-            this.du.saveAllLanguage(this.state.dataArray);
+            this.du.saveLanguage(this.props.navigation.state.params.languageFlag,this.state.dataArray);
             this.props.navigation.goBack();
             ToastAndroid.show("保存", 1000)
         }

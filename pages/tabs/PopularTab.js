@@ -21,6 +21,7 @@ import NetUtil from "../Utils/NetUtil";
 import PopularItemView from "../../itemViews/PopularItemView";
 import DataUtil, {FLAG} from "../Utils/DataUtil"
 import {NET_FLAG} from "../Utils/NetUtil";
+import ItemModel from "../other/ItemModel";
 
 const instructions = Platform.select({
     ios: 'Press Cmd+R to reload,\n' +
@@ -81,7 +82,7 @@ export default class PopularTab extends Component<Props> {
 
 
     loadData() {
-        this.du.getAllLanguage()
+        this.du.getkeys()
             .then(result => {
                 this.setState({
                     tabValues: result
@@ -118,6 +119,7 @@ class PopularLabel extends Component {
         this.renderFooterView = this.renderFooterView.bind(this);
         this.reloadWordData = this.reloadWordData.bind(this);
         this.renderItemView = this.renderItemView.bind(this);
+        this.flushDadaSource = this.flushDadaSource.bind(this);
         this.reloadWordData();
     }
 
@@ -134,6 +136,7 @@ class PopularLabel extends Component {
                     renderRow={(rowData) => this.renderItemView(rowData)}
                     renderFooter={this.renderFooterView}
                     onEndReached={this._toEnd.bind(this)}
+                    enableEmptySections={true}
                     onEndReachedThreshold={5}
                 />
             </View>
@@ -150,26 +153,51 @@ class PopularLabel extends Component {
         console.log(netUrl)
         this.dd.getData(netUrl)
             .then((result) => {
-                let items = result && result.items ? result.items : [];
-
+                /*var items = result && result.items ? result.items : [];
                 console.log(result.updateTime)
                 if (result && result.updateTime && !this.dd.checkDate(result.updateTime)) {
-                    return NetUtil.get(url, NET_FLAG.Popular);
+                    return NetUtil.get(netUrl, NET_FLAG.Popular);
                 }
                 this.setState({
                     dataSource: this.state.dataSource.cloneWithRows(items),
-                })
+                })*/
+                this.datas = result && result.items ? result.items : [];
+
+                if (result && result.updateTime && !this.dd.checkDate(result.updateTime)) {
+                    return NetUtil.get(netUrl, NET_FLAG.Popular);
+                }
+                this.flushDadaSource();
+
 
             })
             .then(result => {
                 if (result && result.items) {
-                    console.log("网络数据----->" + JSON.stringify(items))
-                    this.setState({
-                        dataSource: this.state.dataSource.cloneWithRows(JSON.parse(result.items)),
-                    })
+                    // var items = JSON.parse(result.items);
+                    // console.log("网络数据----->" + JSON.stringify(items))
+                    // this.setState({
+                    //     dataSource: this.state.dataSource.cloneWithRows(items),
+                    // })
+                    this.datas = JSON.parse(result.items);
+                    this.flushDadaSource();
+
                 }
             })
 
+
+    }
+
+    flushDadaSource() {
+
+        var itemModels = [];
+        var len = this.datas.length;
+
+        for (let i = 0;  i < len;i++) {
+
+            itemModels.push(new ItemModel(this.datas[i], false))
+        }
+        this.setState({
+            dataSource: this.state.dataSource.cloneWithRows(itemModels),
+        })
 
     }
 
@@ -205,8 +233,11 @@ class PopularLabel extends Component {
     }
 
     renderItemView(rowdata) {
-        return <PopularItemView data={rowdata}
-                                onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata})}/>
+        // return <PopularItemView data={rowdata}
+        //                         onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata})}/>
+
+        return <PopularItemView itemModel={rowdata}
+                                onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata.item})}/>
     }
 
 

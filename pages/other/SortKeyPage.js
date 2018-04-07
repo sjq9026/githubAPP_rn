@@ -34,7 +34,7 @@ var ScreenWidth = Dimensions.get('window').width;
 export default class SortKeyPage extends Component<Props> {
     constructor(props) {
         super();
-        this.du = new DataUtil(FLAG.hot_language);
+        this.du = new DataUtil(props.navigation.state.params.languageFlag);
         this.sortResultArray = [];
         this.state = {
             dataArray: [],
@@ -53,7 +53,7 @@ export default class SortKeyPage extends Component<Props> {
 
 
     loadData() {
-        this.du.getAllLanguage()
+        this.du.getkeys()
             .then(result => {
                 this.setState({
                     dataArray: result
@@ -114,35 +114,39 @@ export default class SortKeyPage extends Component<Props> {
             let index = this.state.dataArray.indexOf(data);
             sortResultArray.splice(index, 1, this.state.checkedArray[i]);
         }
-        this.du.saveAllLanguage(sortResultArray);
+        this.du.saveLanguage(this.props.navigation.state.params.languageFlag, sortResultArray);
     }
 
     gotoLastPage() {
-        if (this.state.changeValues.length === 0) {
-            this.props.navigation.goBack();
-            return;
+        console.log("originalCheckArray"+this.state.originalCheckArray);
+        console.log("checkedArray"+this.state.checkedArray);
+
+            if (ArrayUtil.isEqual(this.state.originalCheckArray, this.state.checkedArray)) {
+                this.props.navigation.goBack();
+                return;
+            }
+            Alert.alert(
+                '提示',
+                '是否保存所做的修改？',
+                [
+                    {
+                        text: '不保存', onPress: () => {
+                            this.props.navigation.goBack();
+                        }
+                    },
+                    {
+                        text: '保存', onPress: () => {
+                            this.du.saveLanguage(this.props.navigation.state.params.languageFlag, this.state.dataArray);
+                            this.props.navigation.goBack();
+                        }
+                    },
+                ],
+                {cancelable: false}
+            )
+
+
         }
-        Alert.alert(
-            '提示',
-            '是否保存所做的修改？',
-            [
-                {
-                    text: '不保存', onPress: () => {
-                    this.props.navigation.goBack();
-                }
-                },
-                {
-                    text: '保存', onPress: () => {
-                    this.du.saveAllLanguage(this.state.dataArray);
-                    this.props.navigation.goBack();
-                }
-                },
-            ],
-            {cancelable: false}
-        )
 
-
-    }
 
 
 }

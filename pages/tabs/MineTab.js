@@ -12,6 +12,7 @@ import {
   View,
     Button
 } from 'react-native';
+import {FLAG} from "../Utils/DataUtil";
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -25,13 +26,27 @@ export default class MineTab extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
-        <Button style={styles.welcome} title="点击设置标签" onPress={()=> this.props.navigation.navigate('CustomKeyPage',{isRemove:false})}>
+        <Button style={styles.welcome} title="点击设置标签" onPress={()=> this.props.navigation.navigate('CustomKeyPage',{isRemove:false,languageFlag:FLAG.hot_language})}>
         </Button>
-        <Button style={styles.welcome} title="拖拽排序" onPress={()=> this.props.navigation.navigate('SortKeyPage')}>
+        <Button style={styles.welcome} title="拖拽排序" onPress={()=> this.props.navigation.navigate('SortKeyPage',{languageFlag:FLAG.hot_language})}>
         </Button>
 
-        <Button style={styles.welcome} title="删除标签" onPress={()=> this.props.navigation.navigate('CustomKeyPage',{isRemove:true})}>
+        <Button style={styles.welcome} title="删除标签" onPress={()=> this.props.navigation.navigate('CustomKeyPage',{isRemove:true,languageFlag:FLAG.hot_language})}>
         </Button>
+
+
+
+          <Button style={styles.welcome} title="点击设置所有语言" onPress={()=> this.props.navigation.navigate('CustomKeyPage',{isRemove:false,languageFlag:FLAG.all_language})}>
+          </Button>
+          <Button style={styles.welcome} title="拖拽排序所有语言" onPress={()=> this.props.navigation.navigate('SortKeyPage',{languageFlag:FLAG.all_language})}>
+          </Button>
+
+          <Button style={styles.welcome} title="删除语言" onPress={()=> this.props.navigation.navigate('CustomKeyPage',{isRemove:true,languageFlag:FLAG.all_language})}>
+          </Button>
+
+
+
+
       </View>
     );
   }

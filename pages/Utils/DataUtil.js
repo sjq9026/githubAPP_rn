@@ -17,7 +17,7 @@ export default class DataUtil {
     }
 
 
-    getAllLanguage() {
+    getkeys() {
         console.log(this.flag)
         return new Promise((resolve, reject) => {
             AsyncStorage.getItem(this.flag, (error, result) => {
