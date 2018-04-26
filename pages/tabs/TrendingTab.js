@@ -46,6 +46,7 @@ const instructions = Platform.select({
 
 let TimeSpans = [new TimeSpan("今天", "since=daily"), new TimeSpan("本周", "since=weekly"), new TimeSpan("本月", "since=monthly")];
 const width = Dimensions.get("window").width;
+const { Popover } = renderers;
 export default class TrendingTab extends Component<Props> {
     constructor(props) {
         super(props);

@@ -12,7 +12,8 @@ import {
     View,
     Image,
     Dimensions,
-    TouchableHighlight
+    TouchableHighlight,
+    ToastAndroid
 } from 'react-native';
 
 const width = Dimensions.get("window").width;
@@ -27,13 +28,17 @@ export default class PopularItemView extends Component<Props> {
 
     constructor(props) {
         super(props);
-
+        this.state = {
+            isFavorite: props.itemModel.isFavorite
+        }
+        this.onFavoritePress = this.onFavoritePress.bind(this)
     }
 
 
     render() {
-      // /  var data = this.props.data;
+        // /  var data = this.props.data;
         var data = this.props.itemModel.item;
+        var favoriteImg = this.props.itemModel.isFavorite ? require("../imgs/ic_star.png") : require("../imgs/ic_unstar_transparent.png")
 
         return (
             <View style={styles.container}>
@@ -61,7 +66,12 @@ export default class PopularItemView extends Component<Props> {
                                 <Text style={{fontSize: 16, color: "black"}}>start:</Text>
                                 <Text style={{alignItems: 'center'}}>{data.stargazers_count}</Text>
                             </View>
-                            <Image style={{width: 18, height: 18}} source={require("../imgs/ic_star.png")}/>
+
+                            <TouchableHighlight underlayColor="#1FB579" onPress={this.onFavoritePress}>
+                                <Image style={{width: 18, height: 18}}
+                                       source={this.state.isFavorite ? require("../imgs/ic_star.png") : require("../imgs/ic_unstar_transparent.png")}/>
+                            </TouchableHighlight>
+
                         </View>
 
                     </View>
@@ -71,6 +81,15 @@ export default class PopularItemView extends Component<Props> {
             </View>
         );
     }
+
+    onFavoritePress() {
+        this.setState({
+            isFavorite: !this.state.isFavorite
+        })
+        this.props.onFavoriteClick();
+    }
+
+
 }
 
 const styles = StyleSheet.create({

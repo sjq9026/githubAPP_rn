@@ -71,11 +71,7 @@ export default class PopularTab extends Component<Props> {
 
                             </PopularLabel> : null;
                     })}
-
-
                 </ScrollableTabView>
-
-
             </View>
         );
     }
@@ -120,6 +116,8 @@ class PopularLabel extends Component {
         this.reloadWordData = this.reloadWordData.bind(this);
         this.renderItemView = this.renderItemView.bind(this);
         this.flushDadaSource = this.flushDadaSource.bind(this);
+
+
         this.reloadWordData();
     }
 
@@ -191,7 +189,7 @@ class PopularLabel extends Component {
         var itemModels = [];
         var len = this.datas.length;
 
-        for (let i = 0;  i < len;i++) {
+        for (let i = 0; i < len; i++) {
 
             itemModels.push(new ItemModel(this.datas[i], false))
         }
@@ -237,10 +235,16 @@ class PopularLabel extends Component {
         //                         onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata})}/>
 
         return <PopularItemView itemModel={rowdata}
-                                onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata.item})}/>
+                                onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata.item})}
+                                onFavoriteClick={()=>this.onFavoriteClick(rowdata)}
+
+        />
     }
 
-
+    onFavoriteClick(rowdata) {
+        rowdata.isFavorite = !rowdata.isFavorite;
+        ToastAndroid.show(rowdata.item.stargazers_count+"", 1000);
+    }
 }
 
 

@@ -8,6 +8,7 @@ import ReactNative from 'react-native';
 import NetUtil from "./NetUtil";
 
 export const FLAG = {all_language: "all_language", hot_language: "hot_language"}
+export const FAVORITE_FLAG = {popular_flag:"popular_flag",trending_flag:"trending_flag"}
 export default class DataUtil {
 
 
@@ -127,7 +128,35 @@ export default class DataUtil {
         if (currentDate.getDate() !== targetDate.getDate())return false;
         if (currentDate.getHours() - targetDate.getHours() > 4)return false;
         return true;
+    }
 
 
+    getAllFavoriteIds(flag){
+        return new Promise((resolve,reject)=>{
+
+        })
+    }
+
+
+    saveFavorite(flag,id){
+         return new Promise((resolve, reject)=>{
+                AsyncStorage.getItem(flag,(error, result) => {
+                    console.log(this.flag)
+                    if (error) {
+                        reject(error);
+                        return;
+                    }
+                    if (!result) {
+                     result.push(id);
+                     AsyncStorage.setItem(flag,result);
+                    } else {
+                        try {
+                            resolve(JSON.parse(result));
+                        } catch (e) {
+                            reject(error);
+                        }
+                    }
+                })
+         })
     }
 }
