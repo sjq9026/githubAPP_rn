@@ -6,9 +6,10 @@ import {NET_FLAG} from "./NetUtil";
 
 import ReactNative from 'react-native';
 import NetUtil from "./NetUtil";
+import ArrayUtil from "./ArrayUtil";
 
 export const FLAG = {all_language: "all_language", hot_language: "hot_language"}
-export const FAVORITE_FLAG = {popular_flag:"popular_flag",trending_flag:"trending_flag"}
+export const FAVORITE_FLAG = {popular_flag: "popular_flag", trending_flag: "trending_flag"}
 export default class DataUtil {
 
 
@@ -114,49 +115,69 @@ export default class DataUtil {
      * @param longTime
      * @returns {boolean}
      */
-     checkDate(longTime) {
-       /* let cDate = new Date();
-        let tDate = new Date();
-        tDate.setDate(long);
-        if (cDate.getMonth() !== tDate.getMonth()) return false;
-        if (cDate.getDate() !== tDate.getMonth()) return false;
-        if (cDate.getHours() - tDate.getHours() > 4) return false;*/
+    checkDate(longTime) {
+        /* let cDate = new Date();
+         let tDate = new Date();
+         tDate.setDate(long);
+         if (cDate.getMonth() !== tDate.getMonth()) return false;
+         if (cDate.getDate() !== tDate.getMonth()) return false;
+         if (cDate.getHours() - tDate.getHours() > 4) return false;*/
         let currentDate = new Date();
         let targetDate = new Date();
         targetDate.setTime(longTime);
-        if (currentDate.getMonth() !== targetDate.getMonth())return false;
-        if (currentDate.getDate() !== targetDate.getDate())return false;
-        if (currentDate.getHours() - targetDate.getHours() > 4)return false;
+        if (currentDate.getMonth() !== targetDate.getMonth()) return false;
+        if (currentDate.getDate() !== targetDate.getDate()) return false;
+        if (currentDate.getHours() - targetDate.getHours() > 4) return false;
         return true;
     }
 
 
-    getAllFavoriteIds(flag){
-        return new Promise((resolve,reject)=>{
-
+    getAllFavoriteIds(flag) {
+        return new Promise((resolve, reject) => {
+            AsyncStorage.getItem(flag, (error, result) => {
+                let keys = [];
+                keys = JSON.parse(result);
+                resolve(keys);
+            })
         })
     }
 
+    /**
+     * 更新收藏状态，如果已收藏列表里面有这个 那么就删除  如果没有 那么就收藏
+     * @param flag  key
+     * @param id     当前收藏条目的id
+     */
+    upDateFavorite(flag, item) {
+        let id = item.id;
+        this.getAllFavoriteIds(flag)
+            .then((result) => {
+                let favoriteKeys = [];
+                if (result) {
+                    favoriteKeys = result;
+                    //如果已经有这个收藏的ID  那么移除，没有的话 添加
+                    if (ArrayUtil.isCon(favoriteKeys, id)) {
+                        favoriteKeys = ArrayUtil.removeArray(favoriteKeys, id)
+                        AsyncStorage.removeItem(id+"", (error) => {
 
-    saveFavorite(flag,id){
-         return new Promise((resolve, reject)=>{
-                AsyncStorage.getItem(flag,(error, result) => {
-                    console.log(this.flag)
-                    if (error) {
-                        reject(error);
-                        return;
-                    }
-                    if (!result) {
-                     result.push(id);
-                     AsyncStorage.setItem(flag,result);
+                        })
                     } else {
-                        try {
-                            resolve(JSON.parse(result));
-                        } catch (e) {
-                            reject(error);
-                        }
+                        favoriteKeys.push(id);
+                        AsyncStorage.setItem(id+"", JSON.stringify(item), (error) => {
+
+                        })
                     }
+                } else {
+                    favoriteKeys.push(id);
+                    AsyncStorage.setItem(id+"", JSON.stringify(item), (error) => {
+
+                    })
+                }
+
+                AsyncStorage.setItem(flag, JSON.stringify(favoriteKeys), (error) => {
+                    alert("Favorite数据更新成功")
                 })
-         })
+
+
+            })
     }
 }

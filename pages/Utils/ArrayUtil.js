@@ -35,5 +35,20 @@ export default class ArrayUtil {
         return true;
     }
 
+    /**
+     * 判断数组是否包含某个元素
+     * @param arr
+     * @param item
+     * @returns {boolean}
+     */
+    static isCon(arr,item){
+            for(let i=0;i<arr.length;i++){
+                if(arr[i] === item){
+                    return true;
+                }
+            }
+            return false;
+    }
+
 
 }

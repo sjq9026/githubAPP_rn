@@ -19,9 +19,10 @@ import {
 import ScrollableTabView, {ScrollableTabBar, DefaultTabBar} from "react-native-scrollable-tab-view";
 import NetUtil from "../Utils/NetUtil";
 import PopularItemView from "../../itemViews/PopularItemView";
-import DataUtil, {FLAG} from "../Utils/DataUtil"
+import DataUtil, {FLAG, FAVORITE_FLAG} from "../Utils/DataUtil"
 import {NET_FLAG} from "../Utils/NetUtil";
 import ItemModel from "../other/ItemModel";
+import ArrayUtil from "../Utils/ArrayUtil";
 
 const instructions = Platform.select({
     ios: 'Press Cmd+R to reload,\n' +
@@ -186,16 +187,29 @@ class PopularLabel extends Component {
 
     flushDadaSource() {
 
-        var itemModels = [];
-        var len = this.datas.length;
+        let itemModels = [];
+        let len = this.datas.length;
+        //获取所有已收藏的条目的id
+        this.dd.getAllFavoriteIds(FAVORITE_FLAG.popular_flag)
+            .then((result) => {
+               if(result === null || result.length === 0){
+                   for (let i = 0; i < len; i++) {
+                       itemModels.push(new ItemModel(this.datas[i], false));
+                   }
+               }else{
+                   for (let i = 0; i < len; i++) {
+                       let isFavorite = ArrayUtil.isCon(result,this.datas[i].id);
+                       console.log("id="+this.datas[i].id+"      isFavorite="+isFavorite+"")
+                       itemModels.push(new ItemModel(this.datas[i], ArrayUtil.isCon(result,this.datas[i].id)));
+                   }
+               }
+                this.setState({
+                    dataSource: this.state.dataSource.cloneWithRows(itemModels),
+                })
 
-        for (let i = 0; i < len; i++) {
+            })
 
-            itemModels.push(new ItemModel(this.datas[i], false))
-        }
-        this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(itemModels),
-        })
+
 
     }
 
@@ -236,14 +250,15 @@ class PopularLabel extends Component {
 
         return <PopularItemView itemModel={rowdata}
                                 onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata.item})}
-                                onFavoriteClick={()=>this.onFavoriteClick(rowdata)}
+                                onFavoriteClick={() => this.onFavoriteClick(rowdata)}
 
         />
     }
 
     onFavoriteClick(rowdata) {
         rowdata.isFavorite = !rowdata.isFavorite;
-        ToastAndroid.show(rowdata.item.stargazers_count+"", 1000);
+        ToastAndroid.show(rowdata.item.stargazers_count + "", 1000);
+        this.dd.upDateFavorite(FAVORITE_FLAG.popular_flag, rowdata.item);
     }
 }
 
