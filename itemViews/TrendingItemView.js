@@ -27,11 +27,15 @@ export default class TrendingItemView extends Component<Props> {
 
     constructor(props) {
         super(props);
-
+        this.state={
+            isFavorite:props.data.isFavorite
+        }
+        this.onFavoritePress = this.onFavoritePress.bind(this)
     }
 
 
     render() {
+        let data = this.props.data.item;
         return (
             <View style={styles.container}>
 
@@ -40,8 +44,8 @@ export default class TrendingItemView extends Component<Props> {
                 }}>
 
                     <View style={styles.content}>
-                        <Text style={styles.title}>{this.props.data.full_name}</Text>
-                        <Text style={styles.info}>{this.props.data.description}</Text>
+                        <Text style={styles.title}>{data.full_name}</Text>
+                        <Text style={styles.info}>{data.description}</Text>
                         <View style={{
                             height: 30,
                             flexDirection: "row",
@@ -58,7 +62,9 @@ export default class TrendingItemView extends Component<Props> {
                                 <Text style={{fontSize: 16, color: "black"}}>start:</Text>
                                 <Text style={{alignItems: 'center'}}>{this.props.data.stargazers_count}</Text>
                             </View>
-                            <Image style={{width: 18, height: 18}} source={require('../imgs/ic_star.png')}/>
+                            <TouchableHighlight underlayColor="#1FB579" onPress={this.onFavoritePress}>
+                                 <Image style={{width: 18, height: 18}} source={this.state.isFavorite ? require("../imgs/ic_star.png") : require("../imgs/ic_unstar_transparent.png")}/>
+                            </TouchableHighlight>
                         </View>
 
                     </View>
@@ -68,6 +74,14 @@ export default class TrendingItemView extends Component<Props> {
             </View>
         );
     }
+
+    onFavoritePress() {
+        this.setState({
+            isFavorite: !this.state.isFavorite
+        })
+        this.props.onFavoriteClick();
+    }
+
 }
 
 const styles = StyleSheet.create({

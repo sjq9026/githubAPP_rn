@@ -13,7 +13,7 @@ import {
     renderers,
     MenuOption
 } from 'react-native-popup-menu';
-import DataUtil, {FLAG} from "../Utils/DataUtil"
+import DataUtil, {FLAG,FAVORITE_FLAG} from "../Utils/DataUtil"
 import {
     Platform,
     StyleSheet,
@@ -34,6 +34,8 @@ import ScrollableTabView, {ScrollableTabBar, DefaultTabBar} from "react-native-s
 import TrendingItemView from "../../itemViews/TrendingItemView";
 import {NET_FLAG} from "../Utils/NetUtil";
 import TimeSpan from "../other/TimeSpan";
+import ItemModel from "../other/ItemModel";
+import ArrayUtil from "../Utils/ArrayUtil";
 
 const API_URL = 'https://github.com/trending/'
 const instructions = Platform.select({
@@ -47,6 +49,7 @@ const instructions = Platform.select({
 let TimeSpans = [new TimeSpan("今天", "since=daily"), new TimeSpan("本周", "since=weekly"), new TimeSpan("本月", "since=monthly")];
 const width = Dimensions.get("window").width;
 const { Popover } = renderers;
+
 export default class TrendingTab extends Component<Props> {
     constructor(props) {
         super(props);
@@ -139,7 +142,7 @@ export default class TrendingTab extends Component<Props> {
 
                         {this.state.tabValues.map((result, i, array) => {
                             let tab = array[i];
-                            return tab.checked ? <TrendingLabel key={i} tabLabel={tab.name}
+                            return tab.checked ? <TrendingLabel style={{width:50}} key={i} tabLabel={tab.name}
                                                                 TimeSpan={this.state.TimeSpan}{...this.props}>
 
                             </TrendingLabel> : null;
@@ -218,34 +221,53 @@ class TrendingLabel extends Component {
         this.dd.getData(netUrl)
             .then((result) => {
                 let items = result && result.items ? result.items : result ? result : [];
-                if (result) {
-                    console.log("result====true")
-                } else {
-                    console.log("result====false")
-                }
-
-                if (result.updateTime) {
-                    console.log("result.updateTime====true")
-                } else {
-                    console.log("result.updateTime====false")
-                }
+                console.log(items)
 
                 if (result && result.updateTime && !this.dd.checkDate(result.updateTime)) {
                     return NetUtil.get(url);
                 } else {
-                    this.setState({
-                        dataSource: this.state.dataSource.cloneWithRows(items),
-                    })
+                    this.datas = items;
+                    this.refreshData();
+                    // this.setState({
+                    //     dataSource: this.state.dataSource.cloneWithRows(items),
+                    // })
                 }
             })
             .then(result => {
                 if (result && result.items) {
-                    this.setState({
-                        dataSource: this.state.dataSource.cloneWithRows(result.items),
-                    })
+                    // this.setState({
+                    //     dataSource: this.state.dataSource.cloneWithRows(result.items),
+                    // })
+                    this.datas = JSON.parse(result.items);
+                    this.refreshData();
                 }
             })
 
+
+    }
+
+
+    refreshData(){
+        let itemModels = [];
+
+        this.dd.getAllFavoriteIds(FAVORITE_FLAG.trending_flag)
+            .then((result)=>{
+                let len = this.datas.length;
+                if(result === null || result.length === 0){
+                    for (let i = 0; i < len; i++) {
+                        itemModels.push(new ItemModel(this.datas[i], false));
+                    }
+                }else{
+                    for (let i = 0; i < len; i++) {
+                        let isFavorite = ArrayUtil.isCon(result,this.datas[i].fullName);
+                        console.log("id="+this.datas[i].fullName+"      isFavorite="+isFavorite+"")
+                        itemModels.push(new ItemModel(this.datas[i], ArrayUtil.isCon(result,this.datas[i].fullName)));
+                    }
+                }
+                this.setState({
+                    dataSource: this.state.dataSource.cloneWithRows(itemModels),
+                })
+            })
 
     }
 
@@ -282,7 +304,16 @@ class TrendingLabel extends Component {
 
     renderItemView(rowdata) {
         return <TrendingItemView data={rowdata}
-                                 onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata})}/>
+                                 onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata.item})}
+                                 onFavoriteClick={() => this.onFavoriteClick(rowdata)}
+        />
+    }
+
+
+    onFavoriteClick(itemModel){
+        itemModel.isFavorite = !itemModel.isFavorite;
+        ToastAndroid.show(JSON.stringify(itemModel.item) + "", 1000);
+        this.dd.upDateFavorite(FAVORITE_FLAG.trending_flag, itemModel.item);
     }
 
 

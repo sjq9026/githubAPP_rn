@@ -60,12 +60,10 @@ export default class DataUtil {
                     .then(result => {
                         if (result) {
                             resolve(JSON.parse(result))
-                            console.log("数据来源于本地")
                         } else {
                             NetUtil.get(url, this.netFlag)
                                 .then(result => {
                                     resolve(result)
-                                    console.log("数据来源于网络")
                                 })
                                 .catch(error => {
                                     resolve(error)
@@ -145,15 +143,16 @@ export default class DataUtil {
     /**
      * 更新收藏状态，如果已收藏列表里面有这个 那么就删除  如果没有 那么就收藏
      * @param flag  key
-     * @param id     当前收藏条目的id
+     * @param item     当前收藏条目的id
      */
     upDateFavorite(flag, item) {
-        let id = item.id;
+        let id = item.id ? item.id : item.fullName;
         this.getAllFavoriteIds(flag)
             .then((result) => {
                 let favoriteKeys = [];
                 if (result) {
                     favoriteKeys = result;
+                    console.log(result)
                     //如果已经有这个收藏的ID  那么移除，没有的话 添加
                     if (ArrayUtil.isCon(favoriteKeys, id)) {
                         favoriteKeys = ArrayUtil.removeArray(favoriteKeys, id)

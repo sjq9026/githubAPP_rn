@@ -230,6 +230,7 @@ class PopularLabel extends Component {
     }
 
 
+
     _toEnd() {
         this.setState({
             loadingMore: true
@@ -249,7 +250,7 @@ class PopularLabel extends Component {
         //                         onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata})}/>
 
         return <PopularItemView itemModel={rowdata}
-                                onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata.item})}
+                                onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata,flag:"Popular"})}
                                 onFavoriteClick={() => this.onFavoriteClick(rowdata)}
 
         />
