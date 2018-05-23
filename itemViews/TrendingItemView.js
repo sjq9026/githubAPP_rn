@@ -31,6 +31,7 @@ export default class TrendingItemView extends Component<Props> {
             isFavorite:props.data.isFavorite
         }
         this.onFavoritePress = this.onFavoritePress.bind(this)
+        console.log(JSON.stringify(props.data.item.fullName))
     }
 
 
@@ -44,7 +45,7 @@ export default class TrendingItemView extends Component<Props> {
                 }}>
 
                     <View style={styles.content}>
-                        <Text style={styles.title}>{data.full_name}</Text>
+                        <Text style={styles.title}>{data.fullName}</Text>
                         <Text style={styles.info}>{data.description}</Text>
                         <View style={{
                             height: 30,
@@ -60,7 +61,7 @@ export default class TrendingItemView extends Component<Props> {
 
                             <View style={styles.line}>
                                 <Text style={{fontSize: 16, color: "black"}}>start:</Text>
-                                <Text style={{alignItems: 'center'}}>{this.props.data.stargazers_count}</Text>
+                                <Text style={{alignItems: 'center'}}>{this.props.data.item.starCount}</Text>
                             </View>
                             <TouchableHighlight underlayColor="#1FB579" onPress={this.onFavoritePress}>
                                  <Image style={{width: 18, height: 18}} source={this.state.isFavorite ? require("../imgs/ic_star.png") : require("../imgs/ic_unstar_transparent.png")}/>

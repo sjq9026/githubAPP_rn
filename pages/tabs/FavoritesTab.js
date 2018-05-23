@@ -119,6 +119,7 @@ class FavoriteLabel extends Component {
         this.dataUtil.getAllFavoriteItems(this.flag)
             .then((result) => {
                 this.datas = result;
+                console.log(this.datas)
                 this.flushDadaSource();
             })
             .then(result => {
@@ -177,20 +178,25 @@ class FavoriteLabel extends Component {
         // return <PopularItemView data={rowdata}
         //                         onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata})}/>
 
-        return <PopularItemView itemModel={rowdata}
+
+
+        return this.props.flag === FAVORITE_FLAG.popular_flag
+            ? <PopularItemView itemModel={rowdata}
                                 onSelect={() => this.props.navigation.navigate("PopularDetailPage", {
                                     data: rowdata,
                                     flag: "Popular"
                                 })}
-                                onFavoriteClick={() => this.onFavoriteClick(rowdata)}
-
-        />
+                                onFavoriteClick={() => this.onFavoriteClick(rowdata)} />
+            :<TrendingItemView data={rowdata}
+                onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata,flag:"Trending"})}
+                onFavoriteClick={() => this.onFavoriteClick(rowdata)}
+                />
     }
 
     onFavoriteClick(rowdata) {
         rowdata.isFavorite = !rowdata.isFavorite;
-        ToastAndroid.show(rowdata.item.stargazers_count + "", 1000);
-        this.dd.upDateFavorite(FAVORITE_FLAG.popular_flag, rowdata.item);
+
+        this.dataUtil.upDateFavorite(this.props.flag, rowdata.item);
     }
 }
 

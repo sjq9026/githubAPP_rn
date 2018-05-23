@@ -28,14 +28,16 @@ const instructions = Platform.select({
     'Shake or press menu button for dev menu',
 });
 const width = Dimensions.get("window").width;
+const BASE_URL = "https://github.com/";
 export default class PopularDetailPage extends Component<Props> {
     constructor(props) {
         super(props);
         this.favorite = this.props.navigation.state.params.flag === "Popular" ? FAVORITE_FLAG.popular_flag:FAVORITE_FLAG.trending_flag;
         let netFlag = this.props.navigation.state.params.flag === "Popular" ?NET_FLAG.Popular : NET_FLAG.Trending;
         this.dataUtil = new DataUtil(this.favorite,netFlag);
+
         this.state = {
-            url: this.props.navigation.state.params.data.item.html_url,
+            url: this.props.navigation.state.params.flag === "Popular" ?this.props.navigation.state.params.data.item.html_url:BASE_URL+this.props.navigation.state.params.data.item.fullName,
             title: "",
             canGoBack: false,
             isFavorite: this.props.navigation.state.params.data.isFavorite

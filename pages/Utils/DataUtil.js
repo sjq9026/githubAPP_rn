@@ -149,7 +149,7 @@ export default class DataUtil {
      */
     upDateFavorite(flag, item) {
 
-        let id = item.id !== null ? item.id : item.fullName;
+        let id = item.id  ? item.id : item.fullName;
         this.getAllFavoriteIds(flag)
             .then((result) => {
                 let favoriteKeys = [];
@@ -196,7 +196,12 @@ export default class DataUtil {
 
                     if (keys) {
                         for(let i = 0;i<keys.length;i++){
-                            favoriteKeys.push(JSON.stringify(keys[i]))
+                            if(favoriteKey === FAVORITE_FLAG.popular_flag){
+                                favoriteKeys.push(JSON.stringify(keys[i]))
+                            }else {
+                                favoriteKeys.push(keys[i])
+                            }
+
                         }
                         AsyncStorage.multiGet(favoriteKeys, (error, result) => {
                             if (result) {

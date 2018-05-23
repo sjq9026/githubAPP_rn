@@ -30,7 +30,7 @@ import {
     ActivityIndicator,
 } from 'react-native';
 import ScrollableTabView, {ScrollableTabBar, DefaultTabBar} from "react-native-scrollable-tab-view";
-
+import NetUtil from "../Utils/NetUtil";
 import TrendingItemView from "../../itemViews/TrendingItemView";
 import {NET_FLAG} from "../Utils/NetUtil";
 import TimeSpan from "../other/TimeSpan";
@@ -224,7 +224,7 @@ class TrendingLabel extends Component {
                 console.log(items)
 
                 if (result && result.updateTime && !this.dd.checkDate(result.updateTime)) {
-                    return NetUtil.get(url);
+                    return NetUtil.get(netUrl);
                 } else {
                     this.datas = items;
                     this.refreshData();
@@ -304,7 +304,7 @@ class TrendingLabel extends Component {
 
     renderItemView(rowdata) {
         return <TrendingItemView data={rowdata}
-                                 onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata.item})}
+                                 onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata,flag:"Trending"})}
                                  onFavoriteClick={() => this.onFavoriteClick(rowdata)}
         />
     }
