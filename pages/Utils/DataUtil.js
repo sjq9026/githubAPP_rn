@@ -1,3 +1,4 @@
+
 import keys from '../../res/data/keys.json'
 import language from '../../res/data/langs.json';
 import {AsyncStorage} from "react-native"
@@ -135,6 +136,7 @@ export default class DataUtil {
             AsyncStorage.getItem(flag, (error, result) => {
                 let keys = [];
                 keys = JSON.parse(result);
+                console.log("所有已收藏的key----->"+keys);
                 resolve(keys);
             })
         })
@@ -146,7 +148,8 @@ export default class DataUtil {
      * @param item     当前收藏条目的id
      */
     upDateFavorite(flag, item) {
-        let id = item.id ? item.id : item.fullName;
+
+        let id = item.id !== null ? item.id : item.fullName;
         this.getAllFavoriteIds(flag)
             .then((result) => {
                 let favoriteKeys = [];
@@ -156,18 +159,18 @@ export default class DataUtil {
                     //如果已经有这个收藏的ID  那么移除，没有的话 添加
                     if (ArrayUtil.isCon(favoriteKeys, id)) {
                         favoriteKeys = ArrayUtil.removeArray(favoriteKeys, id)
-                        AsyncStorage.removeItem(id+"", (error) => {
+                        AsyncStorage.removeItem(id + "", (error) => {
 
                         })
                     } else {
                         favoriteKeys.push(id);
-                        AsyncStorage.setItem(id+"", JSON.stringify(item), (error) => {
+                        AsyncStorage.setItem(id + "", JSON.stringify(item), (error) => {
 
                         })
                     }
                 } else {
                     favoriteKeys.push(id);
-                    AsyncStorage.setItem(id+"", JSON.stringify(item), (error) => {
+                    AsyncStorage.setItem(id + "", JSON.stringify(item), (error) => {
 
                     })
                 }
@@ -178,5 +181,37 @@ export default class DataUtil {
 
 
             })
+    }
+
+    /**
+     * 获取所有收藏的项目
+     * @param favoriteKey  popular_flag Trending_flag
+     */
+    getAllFavoriteItems(favoriteKey) {
+        return new Promise((resolve, reject) => {
+            this.getAllFavoriteIds(favoriteKey)
+                .then((keys) => {
+                    let favoriteKeys = [];
+                    let items = [];
+
+                    if (keys) {
+                        for(let i = 0;i<keys.length;i++){
+                            favoriteKeys.push(JSON.stringify(keys[i]))
+                        }
+                        AsyncStorage.multiGet(favoriteKeys, (error, result) => {
+                            if (result) {
+                                result.map((result, i, array) => {
+                                    items.push(JSON.parse(array[i][1]));
+                                })
+                                resolve(items);
+                            } else {
+                                resolve(items);
+                            }
+                        })
+                    } else {
+                        resolve(items);
+                    }
+                })
+        })
     }
 }

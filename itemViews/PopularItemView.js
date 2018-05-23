@@ -39,7 +39,7 @@ export default class PopularItemView extends Component<Props> {
         // /  var data = this.props.data;
         var data = this.props.itemModel.item;
         var favoriteImg = this.props.itemModel.isFavorite ? require("../imgs/ic_star.png") : require("../imgs/ic_unstar_transparent.png")
-
+console.log(data.full_name)
         return (
             <View style={styles.container}>
 

@@ -5,6 +5,8 @@
  */
 
 import React, {Component} from 'react';
+import {FLAG,FAVORITE_FLAG} from "../Utils/DataUtil";
+import {NET_FLAG} from "../Utils/NetUtil";
 import {
     Platform,
     StyleSheet,
@@ -17,6 +19,7 @@ import {
     Image
 } from 'react-native';
 import CustomNavBar from "../other/CustomNavBar";
+import DataUtil from "../Utils/DataUtil";
 
 const instructions = Platform.select({
     ios: 'Press Cmd+R to reload,\n' +
@@ -28,13 +31,17 @@ const width = Dimensions.get("window").width;
 export default class PopularDetailPage extends Component<Props> {
     constructor(props) {
         super(props);
+        this.favorite = this.props.navigation.state.params.flag === "Popular" ? FAVORITE_FLAG.popular_flag:FAVORITE_FLAG.trending_flag;
+        let netFlag = this.props.navigation.state.params.flag === "Popular" ?NET_FLAG.Popular : NET_FLAG.Trending;
+        this.dataUtil = new DataUtil(this.favorite,netFlag);
         this.state = {
             url: this.props.navigation.state.params.data.item.html_url,
             title: "",
             canGoBack: false,
             isFavorite: this.props.navigation.state.params.data.isFavorite
-        }
+        };
         this.leftBtnClick = this.leftBtnClick.bind(this);
+        this.favoriteClick =  this.favoriteClick.bind(this);
         console.log(this.props.navigation.state.params.data)
         console.log(this.props.navigation.state.params.data.isFavorite)
         console.log(this.props.navigation.state.params.flag)
@@ -59,7 +66,7 @@ export default class PopularDetailPage extends Component<Props> {
                         </Image>
                     </TouchableHighlight>
 
-                    <Text>{titleStr}</Text>
+                    <Text style={{color:"white"}}>{titleStr}</Text>
 
                     <View style={styles.right}>
                         <TouchableHighlight onPress={this.shareClick}>
@@ -67,7 +74,7 @@ export default class PopularDetailPage extends Component<Props> {
                                    style={{height: 20, width: 20}}>
                             </Image>
                         </TouchableHighlight>
-                        <TouchableHighlight style={{width: 20, height: 20, marginRight: 15, marginLeft: 15}}
+                        <TouchableHighlight style={{width: 20, height: 20, marginRight: 15,  marginLeft: 15}}
                                             onPress={this.favoriteClick}>
                             <Image source={img}
                                    style={{height: 20, width: 20}}>
@@ -84,8 +91,6 @@ export default class PopularDetailPage extends Component<Props> {
                          onNavigationStateChange={(e) => {
                              this.onWebViewStateChange(e)
                          }}
-
-
                 />
             </View>
         );
@@ -107,6 +112,12 @@ export default class PopularDetailPage extends Component<Props> {
         this.setState({
             canGoBack: e.canGoBack,
         })
+    }
+    favoriteClick(){
+        this.setState({
+            isFavorite : !this.state.isFavorite
+        })
+        this.dataUtil.upDateFavorite(this.favorite, this.props.navigation.state.params.data.item);
     }
 
 

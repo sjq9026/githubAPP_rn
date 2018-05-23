@@ -147,6 +147,10 @@ class PopularLabel extends Component {
         this.loadPopularData();
     }
 
+    componentWillReceiveProps(nextProps){
+        this.loadPopularData();
+    }
+
     loadPopularData() {
         var netUrl = URL + this.props.tabLabel + QUERY_STR;
         console.log(netUrl)
