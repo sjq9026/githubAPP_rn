@@ -1,9 +1,10 @@
 export const MORE_MENU = {
     Custom_Language:"Custom_Language",
     Sort_Language:"Sort_Language",
-    Custom_key:"Custom_Key",
-    Sort_Key:"Sort_Key",
-    Remove_Key:"Remove_Key",
+    Remove_Language:"Remove anguage",
+    Custom_key:"Custom Key",
+    Sort_Key:"Sort Key",
+    Remove_Key:"Remove Key",
     Custom_Theme:"Custom Theme",
     About_Author:"About Author",
     About:"About",

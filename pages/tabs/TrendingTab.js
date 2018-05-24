@@ -269,7 +269,7 @@ class TrendingLabel extends Component {
                 }
                 this.setState({
                     dataSource: this.state.dataSource.cloneWithRows(itemModels),
-                    refreshing:true
+                    refreshing:false
                 })
             })
 
