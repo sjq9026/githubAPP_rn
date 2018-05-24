@@ -5,7 +5,7 @@ import {AsyncStorage} from "react-native"
 import React from 'react';
 import {NET_FLAG} from "./NetUtil";
 
-import ReactNative from 'react-native';
+import {ReactNative,ToastAndroid} from 'react-native';
 import NetUtil from "./NetUtil";
 import ArrayUtil from "./ArrayUtil";
 
@@ -176,7 +176,7 @@ export default class DataUtil {
                 }
 
                 AsyncStorage.setItem(flag, JSON.stringify(favoriteKeys), (error) => {
-                    alert("Favorite数据更新成功")
+                  ToastAndroid.show("更新成功",2000)
                 })
 
 

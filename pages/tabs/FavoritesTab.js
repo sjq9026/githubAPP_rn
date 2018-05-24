@@ -112,6 +112,7 @@ class FavoriteLabel extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        console.log("componentWillReceiverProps");
         this.loadPopularData();
     }
 

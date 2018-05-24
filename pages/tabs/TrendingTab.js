@@ -175,7 +175,7 @@ class TrendingLabel extends Component {
         super(props);
         this.dd = new DataUtil(FLAG.all_language, NET_FLAG.Trending);
         this.state = {
-            refreshing: false,
+            refreshing: true,
             loadingMore: false,
             dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
         }
@@ -218,6 +218,9 @@ class TrendingLabel extends Component {
     loadPopularData(ts) {
         var netUrl = API_URL + this.props.tabLabel + "?" + ts.searchText;
         console.log(netUrl)
+        this.setState({
+            refreshing:true
+        })
         this.dd.getData(netUrl)
             .then((result) => {
                 let items = result && result.items ? result.items : result ? result : [];
@@ -266,6 +269,7 @@ class TrendingLabel extends Component {
                 }
                 this.setState({
                     dataSource: this.state.dataSource.cloneWithRows(itemModels),
+                    refreshing:true
                 })
             })
 
@@ -312,7 +316,6 @@ class TrendingLabel extends Component {
 
     onFavoriteClick(itemModel){
         itemModel.isFavorite = !itemModel.isFavorite;
-        ToastAndroid.show(JSON.stringify(itemModel.item) + "", 1000);
         this.dd.upDateFavorite(FAVORITE_FLAG.trending_flag, itemModel.item);
     }
 

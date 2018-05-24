@@ -52,6 +52,7 @@ export default class PopularTab extends Component<Props> {
     }
 
 
+
     render() {
         return (
             <View style={stys.container}>
@@ -144,15 +145,20 @@ class PopularLabel extends Component {
     }
 
     componentDidMount() {
+        console.log("Popular--------------->componentDidMount()");
         this.loadPopularData();
     }
 
     componentWillReceiveProps(nextProps){
+        console.log("Popular--------------->componentWillReceiverProps(nextPtops)");
         this.loadPopularData();
     }
 
     loadPopularData() {
         var netUrl = URL + this.props.tabLabel + QUERY_STR;
+        this.setState({
+            refreshing:true
+        })
         console.log(netUrl)
         this.dd.getData(netUrl)
             .then((result) => {
@@ -209,6 +215,7 @@ class PopularLabel extends Component {
                }
                 this.setState({
                     dataSource: this.state.dataSource.cloneWithRows(itemModels),
+                    refreshing:false
                 })
 
             })
