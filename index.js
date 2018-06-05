@@ -10,7 +10,9 @@ import WelcomePage from "./pages/WelcomePage";
 import CustomKeyPage from "./pages/other/CustomKeyPage";
 import SortKeyPage from "./pages/other/SortKeyPage";
 import PopularDetailPage from "./pages/tabs/PopularDetailPage";
-
+import AboutAppPage from "./pages/about/AboutAppPage";
+import AuthorMainPage from "./pages/about/AuthorMainPage";
+import AboutAuthorPage from "./pages/about/AboutAuthorPage";
 
 
 const tab = TabNavigator(
@@ -129,6 +131,24 @@ const pages = StackNavigator(
             screen: PopularDetailPage,
             navigationOptions: {
                 header: null,
+            }
+        },
+        AboutAppPage: {
+            screen: AboutAppPage,
+            navigationOptions: {
+                header: null,
+            }
+        },
+        AuthorMainPage:{
+            screen:AuthorMainPage,
+            navigationOptions:{
+                header:null,
+            }
+        },
+        AboutAuthorPage:{
+            screen:AboutAuthorPage,
+            navigationOptions:{
+                header:null,
             }
         }
 

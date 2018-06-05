@@ -25,12 +25,12 @@ export default class ViewUtil{
             <View style={styles.selitem}>
                 <View style={{flexDirection: "row"}}>
                     <Image source={icon}
-                           style={{width: 20, height: 20 ,tintColor:hintColor}}/>
-                    <Text>{content}</Text>
+                           style={{width: 20, height: 20 ,marginLeft:10,tintColor:hintColor}}/>
+                    <Text style={{marginLeft:20}}>{content}</Text>
                 </View>
 
                 <Image source={isExpand?require("../../imgs/ic_star.png"):require("../../imgs/ic_star.png")}
-                       style={{width: 20, height: 20,tintColor:hintColor}}/>
+                       style={{width: 20, height: 20,marginRight:10,tintColor:hintColor}}/>
             </View>
         </TouchableHighlight>)
 

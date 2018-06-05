@@ -140,6 +140,11 @@ export default class MineTab extends Component<Props> {
 
                     {this.getItem(MORE_MENU.Custom_Theme,require("../../imgs/ic_star.png"),MORE_MENU.Custom_Theme,"#2196F3")}
 
+                    <View style={GlobalStyle.line}/>
+                    <Text style={{height: 25, width: width, lineHeight: 25, backgroundColor: "gray", opacity: 0.5,}}>Setting</Text>
+                    <View style={GlobalStyle.line}/>
+
+                    {this.getItem(MORE_MENU.Custom_Theme,require("../../imgs/ic_star.png"),MORE_MENU.About_Author,"#2196F3")}
                 </ScrollView>
 
 
@@ -158,6 +163,10 @@ export default class MineTab extends Component<Props> {
                 isRemove: false,
                 languageFlag: FLAG.all_language
             })
+        }
+
+        if (flag === MORE_MENU.About) {
+            this.props.navigation.navigate('AboutAppPage')
         }
 
         if (flag === MORE_MENU.Sort_Language) {
