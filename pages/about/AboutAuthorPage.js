@@ -55,7 +55,7 @@ const FLAG = {
 export default class AboutAuthorPage extends Component<Props> {
     constructor(props) {
         super(props);
-        this.aboutComponent = new AboutComponent(props, (dic) => this.updateState(dic), ABOUT_FLAG.about_author);
+      /*  this.aboutComponent = new AboutComponent(props, (dic) => this.updateState(dic), ABOUT_FLAG.about_author);
         this.state = {
             isShowRepository: false,
             isShowBolg: false,
@@ -63,10 +63,17 @@ export default class AboutAuthorPage extends Component<Props> {
         }
         this.onBackPress = this.onBackPress.bind(this);
         this.onItemClick = this.onItemClick.bind(this);
-        this.renderItems = this.renderItems.bind(this);
+        this.renderItems = this.renderItems.bind(this);*/
     }
 
-    updateState(dic) {
+    render() {
+        <View>
+            <Text>danshi </Text>
+        </View>
+    }
+
+
+   /* updateState(dic) {
         console.log("updateState-------->"+dic)
         this.setState(dic);
     }
@@ -128,7 +135,7 @@ export default class AboutAuthorPage extends Component<Props> {
                 break;
         }
 
-    }
+    }*/
 
 }
 

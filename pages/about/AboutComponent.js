@@ -12,11 +12,17 @@ import {
     TouchableHighlight
 } from 'react-native';
 import GlobalStyle from "../../res/styles/GlobalStyle"
+import {FAVORITE_FLAG} from "../Utils/DataUtil";
+import {NET_FLAG} from "../Utils/NetUtil";
+import config from "../../res/data/config.json";
+import RepositoryCell from "./RepositoryCell"
 
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
 import ViewUtil from "../Utils/ViewUtil";
 import {MORE_MENU} from "../other/MoreMenu"
-
+import DataUtil from "../Utils/DataUtil";
+import ArrayUtil from "../Utils/ArrayUtil";
+import RepositoryUtil from  "../Utils/RepositoryUtil"
 const instructions = Platform.select({
     ios: 'Press Cmd+R to reload,\n' +
     'Cmd+D or shake for dev menu',
@@ -25,15 +31,86 @@ const instructions = Platform.select({
 });
 
 
-export  const ABOUT_FLAG = {about_app:"about_app",about_author:"about_author"};
+export const ABOUT_FLAG = {about_app: "about_app", about_author: "about_author"};
 
 
-export default class AboutAppPage {
-    constructor(props, updateState, flag) {
+export default class AboutComponent {
+    constructor(props, updateState, flag,config) {
         this.props = props;
         this.updateState = updateState;
         this.flag = flag;
+
+        this.config = config;
+        this.datUtil = new DataUtil(FAVORITE_FLAG.About_Author, NET_FLAG.About_Author);
+        this.repositories = [];
+        this.repositoryUtils = new RepositoryUtil(this);
+        this.favoriteKeys = null;
     }
+
+    componentDidMount() {
+        if (this.flag === ABOUT_FLAG.about_app) {
+            this.repositoryUtils.fetchRepository(this.config.info.currentRepoUrl);
+        } else {
+            var urls = [];
+            var items = this.config.items;
+            for (let i = 0, l = items.length; i < l; i++) {
+                urls.push(this.config.info.url + items[i]);
+            }
+            this.repositoryUtils.fetchRepositories(urls);
+        }
+    }
+
+    onNotifyDataChanged(arr) {
+        this.updateFavorite(items);
+    }
+
+
+    /**
+     * 更新项目的用户收藏状态
+     * @param repositories
+     */
+    async updateFavorite(repositories) {
+        if (repositories) this.repositories = repositories;
+        if (!this.repositories) return;
+        if (!this.favoriteKeys) {
+            this.favoriteKeys = await this.datUtil.getAllFavoriteItems(FAVORITE_FLAG.About_Author);
+        }
+        let projectModels = [];
+        for (let i = 0, l = this.repositories.length; i < l; i++) {
+            var data = this.repositories[i];
+            var item = data.item ? data.item : data;
+            projectModels.push({
+                isFavorite: ArrayUtil.isCon(this.favoriteKeys ? this.favoriteKeys : [], item),
+                item: item,
+            })
+        }
+        this.updateState({
+            projectModels: projectModels,
+        })
+    }
+
+
+    /**
+     * 创建项目视图
+     * @param projectModels
+     * @return {*}
+     */
+    renderRepository(projectModels) {
+        if (!projectModels || projectModels.length === 0) return null;
+        let views = [];
+        for (let i = 0, l = projectModels.length; i < l; i++) {
+            let projectModel = projectModels[i];
+            views.push(
+                <RepositoryCell
+                    key={projectModel.item.id}
+                    theme={this.props.theme}
+                    projectModel={projectModel}
+                />
+            );
+        }
+        return views;
+    }
+
 
     renderParallaxScrollView(params) {
         let config = {};
@@ -92,8 +169,6 @@ export default class AboutAppPage {
         );
         return config;
     }
-
-
 
 
     renderView(contentView, params) {

@@ -105,7 +105,6 @@ const tab = TabNavigator(
 
 const pages = StackNavigator(
     {
-
         Welcome: {
             screen: WelcomePage,
             navigationOptions: {
@@ -151,8 +150,6 @@ const pages = StackNavigator(
                 header:null,
             }
         }
-
-
     }
 )
 

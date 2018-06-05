@@ -1,7 +1,7 @@
 import DataUtil from "./DataUtil";
 import Trending from "GitHubTrending";
 
-export const NET_FLAG = {Popular: "popular", Trending: "trending"};
+export const NET_FLAG = {Popular: "popular", Trending: "trending",About_Author:"AboutAuthor"};
 
 export default class NetUtil {
 
@@ -13,7 +13,7 @@ export default class NetUtil {
 
     static get(url, netFlag) {
         return new Promise((resolve, reject) => {
-            if (netFlag === NET_FLAG.Popular) {
+            if (netFlag !== NET_FLAG.Trending) {
                 fetch(url)
                     .then((response) => response.json())
                     .catch((error) => {
@@ -22,8 +22,16 @@ export default class NetUtil {
                     if (!responseData) {
                         reject(new Error("Response is null"))
                     }
-                    resolve(responseData);
-                    DataUtil.saveNetData(url, responseData.items);
+                    if(netFlag === NET_FLAG.Popular){
+                        resolve(responseData);
+                        DataUtil.saveNetData(url, responseData.items);
+                    }
+
+                    if(netFlag ===NET_FLAG.About_Author){
+                        resolve(responseData);
+                        DataUtil.saveNetData(url, responseData);
+                    }
+
                 })
             } else {
                 this.trending = new Trending();

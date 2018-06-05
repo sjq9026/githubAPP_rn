@@ -10,7 +10,7 @@ import NetUtil from "./NetUtil";
 import ArrayUtil from "./ArrayUtil";
 
 export const FLAG = {all_language: "all_language", hot_language: "hot_language"}
-export const FAVORITE_FLAG = {popular_flag: "popular_flag", trending_flag: "trending_flag"}
+export const FAVORITE_FLAG = {popular_flag: "popular_flag", trending_flag: "trending_flag",About_Author:"about_author"}
 export default class DataUtil {
 
 
