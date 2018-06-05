@@ -36,16 +36,20 @@ export default class RepositoryCell extends Component {
         this.props.onFavorite(this.props.projectModel.item, !this.state.isFavorite)
     }
     render() {
-        let item = this.props.projectModel.item? this.props.projectModel.item:this.props.projectModel;
+        let model = this.props.projectModel.item ? this.props.projectModel.item:this.props.projectModel;
+
+       let item = model.items;
+
         let favoriteButton=this.props.projectModel.item?
             <TouchableOpacity
                 style={{padding:6}}
                 onPress={()=>this.onPressFavorite()} underlayColor='transparent'>
                 <Image
                     ref='favoriteIcon'
-                    style={[{width: 22, height: 22,},this.props.theme.styles.tabBarSelectedIcon]}
+                    style={[{width: 22, height: 22}]}
                     source={this.state.favoriteIcon}/>
             </TouchableOpacity>:null;
+
         return (
             <TouchableOpacity
                 onPress={this.props.onSelect}

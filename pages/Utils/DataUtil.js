@@ -60,10 +60,12 @@ export default class DataUtil {
                 this.getLocalData(url)
                     .then(result => {
                         if (result) {
+                            console.log("从本地获取数据")
                             resolve(JSON.parse(result))
                         } else {
                             NetUtil.get(url, this.netFlag)
                                 .then(result => {
+                                    console.log("从网络获取数据")
                                     resolve(result)
                                 })
                                 .catch(error => {

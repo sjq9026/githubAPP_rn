@@ -27,7 +27,7 @@ export default class RepositoryUtil {
     fetchRepository(url) {
         this.dataUtil.getData(url)
             .then(result => {
-                console.log(JSON.stringify(result))
+
                 if (result) {
                     this.updateData(url, result)
                     if (!Utils.checkDate(result.update_date)) {

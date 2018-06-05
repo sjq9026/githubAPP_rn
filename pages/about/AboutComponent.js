@@ -61,7 +61,8 @@ export default class AboutComponent {
     }
 
     onNotifyDataChanged(arr) {
-        this.updateFavorite(items);
+
+        this.updateFavorite(arr);
     }
 
 

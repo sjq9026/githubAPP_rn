@@ -27,8 +27,10 @@ export default class NetUtil {
                         DataUtil.saveNetData(url, responseData.items);
                     }
 
-                    if(netFlag ===NET_FLAG.About_Author){
+                    if(netFlag === NET_FLAG.About_Author){
                         resolve(responseData);
+
+                        console.log("网络获取的数据为--------》"+JSON.stringify(responseData))
                         DataUtil.saveNetData(url, responseData);
                     }
 
