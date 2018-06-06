@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import GlobalStyle from "../../res/styles/GlobalStyle"
 
-import ParallaxScrollView from 'react-native-parallax-scroll-view';
 import ViewUtil from "../Utils/ViewUtil";
 import {MORE_MENU} from "../other/MoreMenu"
 import AboutComponent from "./AboutComponent";
@@ -56,11 +55,11 @@ export default class AboutAppPage extends Component<Props> {
     render() {
         let contentView = <View>
             {this.aboutCommon.renderRepository(this.state.projectModels)}
-            {ViewUtil.getItemView(() => this.onItemClick(MORE_MENU.Main_Page), require("../../imgs/ic_star.png"), MORE_MENU.Main_Page, "#2196F3")}
+            {ViewUtil.getItemView(() => this.onItemClick(MORE_MENU.Main_Page), require("../../imgs/ic_computer.png"), MORE_MENU.Main_Page, "#2196F3")}
             <View style={GlobalStyle.line}/>
-            {ViewUtil.getItemView(() => this.onItemClick(MORE_MENU.About_Author), require("../../imgs/ic_star.png"), MORE_MENU.About_Author, "#2196F3")}
+            {ViewUtil.getItemView(() => this.onItemClick(MORE_MENU.About_Author), require("../../imgs/ic_insert_emoticon.png"), MORE_MENU.About_Author, "#2196F3")}
             <View style={GlobalStyle.line}/>
-            {ViewUtil.getItemView(() => this.onItemClick(MORE_MENU.FeedBack), require("../../imgs/ic_star.png"), MORE_MENU.FeedBack, "#2196F3")}
+            {ViewUtil.getItemView(() => this.onItemClick(MORE_MENU.FeedBack), require("../../imgs/ic_feedback.png"), MORE_MENU.FeedBack, "#2196F3")}
         </View>
         return this.aboutCommon.renderView(contentView, {
             "title": "GitHub Hot",

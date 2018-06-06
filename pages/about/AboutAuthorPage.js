@@ -19,6 +19,7 @@ import ViewUtil from "../Utils/ViewUtil";
 import {MORE_MENU} from "../other/MoreMenu"
 import AboutComponent from "./AboutComponent";
 import {ABOUT_FLAG} from "./AboutComponent";
+import config from "../../res/data/config.json";
 import GlobalStyle from "../../res/styles/GlobalStyle"
 
 
@@ -55,25 +56,22 @@ const FLAG = {
 export default class AboutAuthorPage extends Component<Props> {
     constructor(props) {
         super(props);
-      /*  this.aboutComponent = new AboutComponent(props, (dic) => this.updateState(dic), ABOUT_FLAG.about_author);
+        this.aboutCommon = new AboutComponent(props, (dic) => this.updateState(dic), ABOUT_FLAG.about_author,config);
         this.state = {
+            projectModels: [],
             isShowRepository: false,
             isShowBolg: false,
             isShowContact: false
         }
         this.onBackPress = this.onBackPress.bind(this);
         this.onItemClick = this.onItemClick.bind(this);
-        this.renderItems = this.renderItems.bind(this);*/
-    }
-
-    render() {
-        <View>
-            <Text>danshi </Text>
-        </View>
+        this.renderItems = this.renderItems.bind(this);
     }
 
 
-   /* updateState(dic) {
+
+
+    updateState(dic) {
         console.log("updateState-------->"+dic)
         this.setState(dic);
     }
@@ -82,7 +80,9 @@ export default class AboutAuthorPage extends Component<Props> {
     onBackPress() {
         this.props.navigation.goBack();
     }
-
+    componentDidMount() {
+        this.aboutCommon.componentDidMount();
+    }
     renderItems(dic, isShowAccount) {
 
         let views = [];
@@ -99,17 +99,17 @@ export default class AboutAuthorPage extends Component<Props> {
 
     render() {
         let contentView = <View>
-            {ViewUtil.getItemView(() => this.onItemClick(FLAG.REPOSITORY), require("../../imgs/ic_star.png"), FLAG.REPOSITORY, "#2196F3")}
+            {ViewUtil.getItemView(() => this.onItemClick(FLAG.REPOSITORY), require("../../imgs/ic_code.png"), FLAG.REPOSITORY, "#2196F3",this.state.isShowRepository)}
+            {this.state.isShowRepository ? this.aboutCommon.renderRepository(this.state.projectModels) : null}
             <View style={GlobalStyle.line}/>
 
-
-
-            {ViewUtil.getItemView(() => this.onItemClick(FLAG.BLOG.name), require("../../imgs/ic_star.png"), FLAG.BLOG.name, "#2196F3")}
+            {ViewUtil.getItemView(() => this.onItemClick(FLAG.BLOG.name), require("../../imgs/ic_computer.png"), FLAG.BLOG.name, "#2196F3",this.state.isShowBolg)}
             {this.state.isShowBolg ? this.renderItems(FLAG.BLOG.items, false) : null}
             <View style={GlobalStyle.line}/>
-            {ViewUtil.getItemView(() => this.onItemClick(FLAG.CONTACT.name), require("../../imgs/ic_star.png"), FLAG.CONTACT.name, "#2196F3")}
+            {ViewUtil.getItemView(() => this.onItemClick(FLAG.CONTACT.name), require("../../imgs/ic_contacts.png"), FLAG.CONTACT.name, "#2196F3",this.state.isShowContact)}
+            {this.state.isShowContact ? this.renderItems(FLAG.CONTACT.items,false):null}
         </View>;
-        return this.aboutComponent.renderView(contentView, {
+        return this.aboutCommon.renderView(contentView, {
             "title": "咻咻咻",
             "info": "分享技术 分享快乐",
             "bg_url": "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1527575081565&di=427ceb602b52565392ba0943b997f290&imgtype=0&src=http%3A%2F%2Fi3.sinaimg.cn%2Ftravel%2Ful%2F2009%2F0318%2FU3059P704DT20090318152814.jpg",
@@ -121,7 +121,9 @@ export default class AboutAuthorPage extends Component<Props> {
     onItemClick(flag) {
         switch (flag) {
             case FLAG.REPOSITORY:
-
+                this.updateState({
+                    isShowRepository:!this.state.isShowRepository,
+                });
                 ToastAndroid.show(FLAG.REPOSITORY + "", 1000);
                 break;
             case FLAG.BLOG.name:
@@ -131,11 +133,14 @@ export default class AboutAuthorPage extends Component<Props> {
                 });
                 break;
             case FLAG.CONTACT.name:
+                this.setState({
+                    isShowContact:!this.state.isShowContact
+                })
                 ToastAndroid.show(FLAG.CONTACT.name + "", 1000);
                 break;
         }
 
-    }*/
+    }
 
 }
 

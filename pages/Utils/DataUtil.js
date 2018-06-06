@@ -1,16 +1,19 @@
-
 import keys from '../../res/data/keys.json'
 import language from '../../res/data/langs.json';
 import {AsyncStorage} from "react-native"
 import React from 'react';
 import {NET_FLAG} from "./NetUtil";
 
-import {ReactNative,ToastAndroid} from 'react-native';
+import {ReactNative, ToastAndroid} from 'react-native';
 import NetUtil from "./NetUtil";
 import ArrayUtil from "./ArrayUtil";
 
 export const FLAG = {all_language: "all_language", hot_language: "hot_language"}
-export const FAVORITE_FLAG = {popular_flag: "popular_flag", trending_flag: "trending_flag",About_Author:"about_author"}
+export const FAVORITE_FLAG = {
+    popular_flag: "popular_flag",
+    trending_flag: "trending_flag",
+    About_Author: "about_author"
+}
 export default class DataUtil {
 
 
@@ -138,7 +141,7 @@ export default class DataUtil {
             AsyncStorage.getItem(flag, (error, result) => {
                 let keys = [];
                 keys = JSON.parse(result);
-                console.log("所有已收藏的key----->"+keys);
+                console.log("所有已收藏的key----->" + keys);
                 resolve(keys);
             })
         })
@@ -150,8 +153,13 @@ export default class DataUtil {
      * @param item     当前收藏条目的id
      */
     upDateFavorite(flag, item) {
+        let id = null;
+        if (flag !== FAVORITE_FLAG.About_Author) {
+            id = item.id ? item.id+"" : item.fullName;
+        } else {
+            id = item.id+"";
+        }
 
-        let id = item.id  ? item.id : item.fullName;
         this.getAllFavoriteIds(flag)
             .then((result) => {
                 let favoriteKeys = [];
@@ -178,7 +186,7 @@ export default class DataUtil {
                 }
 
                 AsyncStorage.setItem(flag, JSON.stringify(favoriteKeys), (error) => {
-                  ToastAndroid.show("更新成功",2000)
+                    ToastAndroid.show("更新成功", 2000)
                 })
 
 
@@ -197,10 +205,10 @@ export default class DataUtil {
                     let items = [];
 
                     if (keys) {
-                        for(let i = 0;i<keys.length;i++){
-                            if(favoriteKey === FAVORITE_FLAG.popular_flag){
+                        for (let i = 0; i < keys.length; i++) {
+                            if (favoriteKey === FAVORITE_FLAG.popular_flag) {
                                 favoriteKeys.push(JSON.stringify(keys[i]))
-                            }else {
+                            } else {
                                 favoriteKeys.push(keys[i])
                             }
 

@@ -5,7 +5,7 @@
  */
 
 import React, {Component} from 'react';
-import {FLAG,FAVORITE_FLAG} from "../Utils/DataUtil";
+import {FLAG, FAVORITE_FLAG} from "../Utils/DataUtil";
 import {NET_FLAG} from "../Utils/NetUtil";
 import {
     Platform,
@@ -32,18 +32,50 @@ const BASE_URL = "https://github.com/";
 export default class PopularDetailPage extends Component<Props> {
     constructor(props) {
         super(props);
-        this.favorite = this.props.navigation.state.params.flag === "Popular" ? FAVORITE_FLAG.popular_flag:FAVORITE_FLAG.trending_flag;
-        let netFlag = this.props.navigation.state.params.flag === "Popular" ?NET_FLAG.Popular : NET_FLAG.Trending;
-        this.dataUtil = new DataUtil(this.favorite,netFlag);
+        this.favorite = null;
+        let netFlag = null;
+        this.titleStr = null;
+        switch(this.props.navigation.state.params.flag){
+            case "Popular":
+                this.favorite = FAVORITE_FLAG.popular_flag;
+                this.titleStr = this.props.navigation.state.params.data.item.full_name + "";
+                netFlag =  NET_FLAG.Popular;
+                break;
+            case "Trending":
+                this.favorite = FAVORITE_FLAG.trending_flag;
+                this.titleStr = this.props.navigation.state.params.data.item.fullName;
+                netFlag = NET_FLAG.Trending;
+                break;
+            case "About":
+                this.favorite = FAVORITE_FLAG.About_Author;
+                this.titleStr =  this.props.navigation.state.params.data.html_url;
+                netFlag = NET_FLAG.About_Author;
+                break;
+        }
+
+        this.dataUtil = new DataUtil(this.favorite, netFlag);
+
+
+
+        let url = null;
+        if (this.props.navigation.state.params.flag === "Popular") {
+            url = this.props.navigation.state.params.data.item.html_url;
+        }
+        if (this.props.navigation.state.params.flag === "Trending") {
+            url = BASE_URL + this.props.navigation.state.params.data.item.fullName
+        }
+        if (this.props.navigation.state.params.flag === "About") {
+            url = this.props.navigation.state.params.data.html_url;
+        }
 
         this.state = {
-            url: this.props.navigation.state.params.flag === "Popular" ?this.props.navigation.state.params.data.item.html_url:BASE_URL+this.props.navigation.state.params.data.item.fullName,
+            url: url,
             title: "",
             canGoBack: false,
             isFavorite: this.props.navigation.state.params.data.isFavorite
         };
         this.leftBtnClick = this.leftBtnClick.bind(this);
-        this.favoriteClick =  this.favoriteClick.bind(this);
+        this.favoriteClick = this.favoriteClick.bind(this);
         console.log(this.props.navigation.state.params.data)
         console.log(this.props.navigation.state.params.data.isFavorite)
         console.log(this.props.navigation.state.params.flag)
@@ -52,13 +84,9 @@ export default class PopularDetailPage extends Component<Props> {
 
     render() {
 
-        let titleStr = this.props.navigation.state.params.flag === "Popular"
-            ? this.props.navigation.state.params.data.item.full_name + ""
-            : this.props.navigation.state.params.data.item.fullName;
 
         let img = this.state.isFavorite ? require("../../imgs/ic_star.png") : require("../../imgs/ic_unstar_transparent.png");
 
-        console.log(titleStr)
         return (
             <View style={styles.container}>
                 <View style={styles.title}>
@@ -68,7 +96,7 @@ export default class PopularDetailPage extends Component<Props> {
                         </Image>
                     </TouchableHighlight>
 
-                    <Text style={{color:"white"}}>{titleStr}</Text>
+                    <Text style={{color: "white"}}>{this.titleStr}</Text>
 
                     <View style={styles.right}>
                         <TouchableHighlight onPress={this.shareClick}>
@@ -76,7 +104,7 @@ export default class PopularDetailPage extends Component<Props> {
                                    style={{height: 20, width: 20}}>
                             </Image>
                         </TouchableHighlight>
-                        <TouchableHighlight style={{width: 20, height: 20, marginRight: 15,  marginLeft: 15}}
+                        <TouchableHighlight style={{width: 20, height: 20, marginRight: 15, marginLeft: 15}}
                                             onPress={this.favoriteClick}>
                             <Image source={img}
                                    style={{height: 20, width: 20}}>
@@ -115,9 +143,10 @@ export default class PopularDetailPage extends Component<Props> {
             canGoBack: e.canGoBack,
         })
     }
-    favoriteClick(){
+
+    favoriteClick() {
         this.setState({
-            isFavorite : !this.state.isFavorite
+            isFavorite: !this.state.isFavorite
         })
         this.dataUtil.upDateFavorite(this.favorite, this.props.navigation.state.params.data.item);
     }

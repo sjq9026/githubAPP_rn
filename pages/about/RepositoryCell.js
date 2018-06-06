@@ -27,18 +27,17 @@ export default class RepositoryCell extends Component {
         this.props.projectModel.isFavorite = isFavorite;
         this.setState({
             isFavorite: isFavorite,
-            favoriteIcon: isFavorite ? require('../../imgs/ic_star.png') : require('../../imgs/ic_star.png')
+            favoriteIcon: isFavorite ? require('../../imgs/ic_star.png') : require('../../imgs/ic_unstar_transparent.png')
         })
     }
 
     onPressFavorite() {
-        this.setFavoriteState(!this.state.isFavorite)
-        this.props.onFavorite(this.props.projectModel.item, !this.state.isFavorite)
+        this.setFavoriteState(!this.state.isFavorite);
+        this.props.onFavorite();
     }
     render() {
-        let model = this.props.projectModel.item ? this.props.projectModel.item:this.props.projectModel;
+        let item = this.props.projectModel.item.items ? this.props.projectModel.item.items:this.props.projectModel.item;
 
-       let item = model.items;
 
         let favoriteButton=this.props.projectModel.item?
             <TouchableOpacity

@@ -18,11 +18,11 @@ import config from "../../res/data/config.json";
 import RepositoryCell from "./RepositoryCell"
 
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
-import ViewUtil from "../Utils/ViewUtil";
 import {MORE_MENU} from "../other/MoreMenu"
 import DataUtil from "../Utils/DataUtil";
 import ArrayUtil from "../Utils/ArrayUtil";
-import RepositoryUtil from  "../Utils/RepositoryUtil"
+import RepositoryUtil from "../Utils/RepositoryUtil"
+
 const instructions = Platform.select({
     ios: 'Press Cmd+R to reload,\n' +
     'Cmd+D or shake for dev menu',
@@ -35,13 +35,13 @@ export const ABOUT_FLAG = {about_app: "about_app", about_author: "about_author"}
 
 
 export default class AboutComponent {
-    constructor(props, updateState, flag,config) {
+    constructor(props, updateState, flag, config) {
         this.props = props;
         this.updateState = updateState;
         this.flag = flag;
 
         this.config = config;
-        this.datUtil = new DataUtil(FAVORITE_FLAG.About_Author, NET_FLAG.About_Author);
+        this.dataUtil = new DataUtil(FAVORITE_FLAG.About_Author, NET_FLAG.About_Author);
         this.repositories = [];
         this.repositoryUtils = new RepositoryUtil(this);
         this.favoriteKeys = null;
@@ -74,7 +74,7 @@ export default class AboutComponent {
         if (repositories) this.repositories = repositories;
         if (!this.repositories) return;
         if (!this.favoriteKeys) {
-            this.favoriteKeys = await this.datUtil.getAllFavoriteItems(FAVORITE_FLAG.About_Author);
+            this.favoriteKeys = await this.dataUtil.getAllFavoriteItems(FAVORITE_FLAG.About_Author);
         }
         let projectModels = [];
         for (let i = 0, l = this.repositories.length; i < l; i++) {
@@ -100,16 +100,29 @@ export default class AboutComponent {
         if (!projectModels || projectModels.length === 0) return null;
         let views = [];
         for (let i = 0, l = projectModels.length; i < l; i++) {
+
             let projectModel = projectModels[i];
+            let item = projectModel.item.items ? projectModel.item.items:projectModel.item;
             views.push(
                 <RepositoryCell
-                    key={projectModel.item.id}
+                    key={item.id}
                     theme={this.props.theme}
                     projectModel={projectModel}
+                    onFavorite={()=>this.onFavorite(item)}
+                    onSelect={() => this.onItemClick(projectModel)}
                 />
             );
         }
         return views;
+    }
+
+    onFavorite(item) {
+        this.dataUtil.upDateFavorite(FAVORITE_FLAG.About_Author, item);
+    }
+
+    onItemClick(projectModel){
+        let item = projectModel.item.items ? projectModel.item.items:projectModel.item;
+        this.props.navigation.navigate("PopularDetailPage", {data: item,flag:"About"})
     }
 
 

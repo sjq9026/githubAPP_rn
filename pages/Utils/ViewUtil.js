@@ -29,7 +29,7 @@ export default class ViewUtil{
                     <Text style={{marginLeft:20}}>{content}</Text>
                 </View>
 
-                <Image source={isExpand?require("../../imgs/ic_star.png"):require("../../imgs/ic_star.png")}
+                <Image source={isExpand ? require("../../imgs/ic_tiaozhuan_down.png"):require("../../imgs/ic_tiaozhuan.png")}
                        style={{width: 20, height: 20,marginRight:10,tintColor:hintColor}}/>
             </View>
         </TouchableHighlight>)
