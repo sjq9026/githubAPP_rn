@@ -74,14 +74,14 @@ export default class AboutComponent {
         if (repositories) this.repositories = repositories;
         if (!this.repositories) return;
         if (!this.favoriteKeys) {
-            this.favoriteKeys = await this.dataUtil.getAllFavoriteItems(FAVORITE_FLAG.About_Author);
+            this.favoriteKeys = await this.dataUtil.getAllFavoriteIds(FAVORITE_FLAG.About_Author);
         }
         let projectModels = [];
         for (let i = 0, l = this.repositories.length; i < l; i++) {
             var data = this.repositories[i];
-            var item = data.item ? data.item : data;
+            var item = data.items ? data.items : data;
             projectModels.push({
-                isFavorite: ArrayUtil.isCon(this.favoriteKeys ? this.favoriteKeys : [], item),
+                isFavorite: ArrayUtil.isCon(this.favoriteKeys ? this.favoriteKeys : [], JSON.stringify(item.id)),
                 item: item,
             })
         }

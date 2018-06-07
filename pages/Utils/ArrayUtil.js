@@ -42,6 +42,7 @@ export default class ArrayUtil {
      * @returns {boolean}
      */
     static isCon(arr,item){
+
             for(let i=0;i<arr.length;i++){
                 if(arr[i] === item){
                     return true;
