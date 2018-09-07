@@ -14,7 +14,11 @@ import {
     ToastAndroid,
     RefreshControl,
     ActivityIndicator,
-    ListView
+    ListView,
+    Image,
+    TouchableHighlight,
+    DeviceEventEmitter,
+    BackHandler,
 } from 'react-native';
 import ScrollableTabView, {ScrollableTabBar, DefaultTabBar} from "react-native-scrollable-tab-view";
 import NetUtil from "../Utils/NetUtil";
@@ -23,6 +27,8 @@ import DataUtil, {FLAG, FAVORITE_FLAG} from "../Utils/DataUtil"
 import {NET_FLAG} from "../Utils/NetUtil";
 import ItemModel from "../other/ItemModel";
 import ArrayUtil from "../Utils/ArrayUtil";
+import AppNavigator from '../../AppNavigator'
+
 
 const instructions = Platform.select({
     ios: 'Press Cmd+R to reload,\n' +
@@ -31,11 +37,18 @@ const instructions = Platform.select({
     'Shake or press menu button for dev menu',
 });
 
+
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars';
+var lastBackPressed = 0;
 
 var ScreenWidth = Dimensions.get('window').width;
 var tabValue = ["Android", "IOS", "JAVA", "JavaSript", "Android", "IOS", "JAVA", "JavaSript"];
+export const HOME_ACTION = {POPULAR_CHANGE: "POPULAR_CHANGE"};
+
+
+
+
 export default class PopularTab extends Component<Props> {
     constructor(props) {
         super(props);
@@ -45,17 +58,70 @@ export default class PopularTab extends Component<Props> {
             tabValues: []
         }
         this.renderTabItems = this.renderTabItems.bind(this);
+        this.onSearchClick = this.onSearchClick.bind(this);
     }
 
     componentDidMount() {
+        this.emitter = DeviceEventEmitter.addListener("ACTION", (flag) => {
+            if (flag === HOME_ACTION.POPULAR_CHANGE) {
+                alert("数据变化了")
+                this.loadData();
+            }
+
+        });
+        BackHandler.addEventListener('hardwareBackPress', this.onBackAndroid);
         this.loadData();
     }
 
 
+    onBackAndroid = () => {
+        if (this.lastBackPressed && this.lastBackPressed + 2000 >= Date.now()) {
+            //最近2秒内按过back键，可以退出应用。
+            BackHandler.exitApp();
+            return false;
+        }
+
+        this.lastBackPressed = Date.now();
+        ToastAndroid.show('再按一次退出应用', ToastAndroid.SHORT);
+        return true;
+
+    };
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.onBackAndroid);
+        this.emitter.remove();
+    }
 
     render() {
         return (
             <View style={stys.container}>
+                <AppNavigator
+                    ref={nav => { navigation = nav }}
+                    onNavigationStateChange = {(prevState, newState, action) => {
+                        if (newState.routes.length > 1) {
+                            BackHandler.removeEventListener('hardwareBackPress', this.onBackAndroid);
+                        } else {
+                            BackHandler.addEventListener('hardwareBackPress', this.onBackAndroid);
+                        }
+                    }}
+                />
+                <View style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    height: 50,
+                    width: ScreenWidth,
+                    backgroundColor: "#F5FCFF"
+                }}>
+                    <Text style={{width: 25, height: 25, marginLeft: 10}}> </Text>
+                    <Text onPress={this.onSearchClick}>Popular</Text>
+                    <TouchableHighlight onPress={this.onSearchClick}>
+                        <Image source={require("../../imgs/ic_search_white_48pt.png")}
+                               style={{width: 25, height: 25, tintColor: "#2196F3", marginRight: 10}}
+                        >
+                        </Image>
+                    </TouchableHighlight>
+                </View>
                 <ScrollableTabView
                     renderTabBar={() => <ScrollableTabBar/>}
                     initialPage={0}
@@ -70,12 +136,15 @@ export default class PopularTab extends Component<Props> {
                         let tab = array[i];
                         return tab.checked ?
                             <PopularLabel key={i} tabLabel={tab.name} {...this.props} style={{textAlign: 'center'}}>
-
                             </PopularLabel> : null;
                     })}
                 </ScrollableTabView>
             </View>
         );
+    }
+
+    onSearchClick() {
+        this.props.navigation.navigate("SearchTab");
     }
 
 
@@ -150,11 +219,10 @@ class PopularLabel extends Component {
     }
 
 
-
     loadPopularData() {
         var netUrl = URL + this.props.tabLabel + QUERY_STR;
         this.setState({
-            refreshing:true
+            refreshing: true
         })
         console.log(netUrl)
         this.dd.getData(netUrl)
@@ -199,24 +267,23 @@ class PopularLabel extends Component {
         //获取所有已收藏的条目的id
         this.dd.getAllFavoriteIds(FAVORITE_FLAG.popular_flag)
             .then((result) => {
-               if(result === null || result.length === 0){
-                   for (let i = 0; i < len; i++) {
-                       itemModels.push(new ItemModel(this.datas[i], false));
-                   }
-               }else{
-                   for (let i = 0; i < len; i++) {
-                       let isFavorite = ArrayUtil.isCon(result,this.datas[i].id);
-                       console.log("id="+this.datas[i].id+"      isFavorite="+isFavorite+"")
-                       itemModels.push(new ItemModel(this.datas[i], ArrayUtil.isCon(result,this.datas[i].id)));
-                   }
-               }
+                if (result === null || result.length === 0) {
+                    for (let i = 0; i < len; i++) {
+                        itemModels.push(new ItemModel(this.datas[i], false));
+                    }
+                } else {
+                    for (let i = 0; i < len; i++) {
+                        let isFavorite = ArrayUtil.isCon(result, JSON.stringify(this.datas[i].id));
+                        console.log("id=" + this.datas[i].id + "      isFavorite=" + isFavorite + "")
+                        itemModels.push(new ItemModel(this.datas[i], isFavorite));
+                    }
+                }
                 this.setState({
                     dataSource: this.state.dataSource.cloneWithRows(itemModels),
-                    refreshing:false
+                    refreshing: false
                 })
 
             })
-
 
 
     }
@@ -238,7 +305,6 @@ class PopularLabel extends Component {
     }
 
 
-
     _toEnd() {
         this.setState({
             loadingMore: true
@@ -258,7 +324,10 @@ class PopularLabel extends Component {
         //                         onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata})}/>
 
         return <PopularItemView itemModel={rowdata}
-                                onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata,flag:"Popular"})}
+                                onSelect={() => this.props.navigation.navigate("PopularDetailPage", {
+                                    data: rowdata,
+                                    flag: "Popular"
+                                })}
                                 onFavoriteClick={() => this.onFavoriteClick(rowdata)}
 
         />

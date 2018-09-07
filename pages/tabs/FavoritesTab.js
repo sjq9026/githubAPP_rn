@@ -19,7 +19,7 @@ import {
 import PopularItemView from "../../itemViews/PopularItemView";
 import TrendingItemView from "../../itemViews/TrendingItemView";
 import ScrollableTabView, {ScrollableTabBar, DefaultTabBar} from "react-native-scrollable-tab-view";
-import DataUtil, {FAVORITE_FLAG,FLAG} from "../Utils/DataUtil";
+import DataUtil, {FAVORITE_FLAG, FLAG} from "../Utils/DataUtil";
 import {NET_FLAG} from "../Utils/NetUtil";
 import ItemModel from "../other/ItemModel";
 
@@ -64,9 +64,9 @@ class FavoriteLabel extends Component {
     constructor(props) {
         super(props);
         this.dataUtil = null;
-        if(this.props.flag === FAVORITE_FLAG.popular_flag){
-            this.dataUtil  = new DataUtil(FLAG.hot_language, NET_FLAG.Popular);
-        }else{
+        if (this.props.flag === FAVORITE_FLAG.popular_flag) {
+            this.dataUtil = new DataUtil(FLAG.hot_language, NET_FLAG.Popular);
+        } else {
             this.dataUtil = new DataUtil(FLAG.all_language, NET_FLAG.Trending);
         }
         this.flag = props.flag;
@@ -119,12 +119,14 @@ class FavoriteLabel extends Component {
     loadPopularData() {
         this.dataUtil.getAllFavoriteItems(this.flag)
             .then((result) => {
-                this.datas = result;
-                console.log(this.datas)
-                this.flushDadaSource();
+                if (result !== null && result.length > 0) {
+                    this.datas = result;
+                    console.log(this.datas);
+                    this.flushDadaSource();
+                }
             })
             .then(result => {
-                if (result) {
+                if (result !== null && result.length > 0) {
                     this.datas = JSON.parse(result);
                     this.flushDadaSource();
                 }
@@ -178,20 +180,20 @@ class FavoriteLabel extends Component {
     renderItemView(rowdata) {
         // return <PopularItemView data={rowdata}
         //                         onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata})}/>
-
-
-
         return this.props.flag === FAVORITE_FLAG.popular_flag
             ? <PopularItemView itemModel={rowdata}
+                               onSelect={() => this.props.navigation.navigate("PopularDetailPage", {
+                                   data: rowdata,
+                                   flag: "Popular"
+                               })}
+                               onFavoriteClick={() => this.onFavoriteClick(rowdata)}/>
+            : <TrendingItemView data={rowdata}
                                 onSelect={() => this.props.navigation.navigate("PopularDetailPage", {
                                     data: rowdata,
-                                    flag: "Popular"
+                                    flag: "Trending"
                                 })}
-                                onFavoriteClick={() => this.onFavoriteClick(rowdata)} />
-            :<TrendingItemView data={rowdata}
-                onSelect={() => this.props.navigation.navigate("PopularDetailPage", {data: rowdata,flag:"Trending"})}
-                onFavoriteClick={() => this.onFavoriteClick(rowdata)}
-                />
+                                onFavoriteClick={() => this.onFavoriteClick(rowdata)}
+            />
     }
 
     onFavoriteClick(rowdata) {

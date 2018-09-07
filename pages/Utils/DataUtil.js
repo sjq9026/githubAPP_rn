@@ -207,11 +207,10 @@ export default class DataUtil {
                     if (keys) {
                         for (let i = 0; i < keys.length; i++) {
                             if (favoriteKey === FAVORITE_FLAG.popular_flag) {
-                                favoriteKeys.push(JSON.stringify(keys[i]))
+                                favoriteKeys.push(keys[i])
                             } else {
                                 favoriteKeys.push(keys[i])
                             }
-
                         }
                         AsyncStorage.multiGet(favoriteKeys, (error, result) => {
                             if (result) {

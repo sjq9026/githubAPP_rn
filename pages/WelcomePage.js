@@ -11,6 +11,7 @@ import {
   Text,
   View
 } from 'react-native';
+import {NavigationActions} from "react-navigation"
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -20,6 +21,12 @@ const instructions = Platform.select({
 });
 
 type Props = {};
+const resetAction = NavigationActions.reset({
+    index: 0,
+    actions: [
+        NavigationActions.navigate({routeName: 'Tab'}),
+    ],
+});
 export default class WelcomePage extends Component<Props> {
 
   constructor(props){
@@ -47,6 +54,7 @@ export default class WelcomePage extends Component<Props> {
 
     jumpAPPage(){
         this.props.navigation.navigate('Tab');
+        this.props.navigation.dispatch(resetAction);
         clearInterval(this.timer);
     }
 }

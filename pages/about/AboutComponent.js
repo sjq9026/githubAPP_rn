@@ -169,12 +169,12 @@ export default class AboutComponent {
 
         config.renderFixedHeader = () => (
             <View key="fixed-header" style={styles.fixedSection}>
-                <TouchableHighlight style={{height: 25, width: 25}} onPress={this.onBackPress}>
+                <TouchableHighlight style={{height: 25, width: 25}} onPress={()=>{ this.props.navigation.goBack();}}>
                     <Image source={require("../../imgs/ic_arrow_back_white_36pt.png")}
                            style={{height: 25, width: 25}}>
                     </Image>
                 </TouchableHighlight>
-                <TouchableHighlight style={{height: 25, width: 25}} onPress={this.onBackPress}>
+                <TouchableHighlight style={{height: 25, width: 25}} onPress={()=>{ this.props.navigation.goBack();}}>
                     <Image source={require("../../imgs/ic_arrow_back_white_36pt.png")}
                            style={{height: 25, width: 25}}>
                     </Image>
