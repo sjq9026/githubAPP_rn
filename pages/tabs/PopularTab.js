@@ -27,7 +27,7 @@ import DataUtil, {FLAG, FAVORITE_FLAG} from "../Utils/DataUtil"
 import {NET_FLAG} from "../Utils/NetUtil";
 import ItemModel from "../other/ItemModel";
 import ArrayUtil from "../Utils/ArrayUtil";
-import AppNavigator from '../../AppNavigator'
+import NavigatorService from "../other/NavigatorService"
 
 
 const instructions = Platform.select({
@@ -75,15 +75,21 @@ export default class PopularTab extends Component<Props> {
 
 
     onBackAndroid = () => {
-        if (this.lastBackPressed && this.lastBackPressed + 2000 >= Date.now()) {
-            //最近2秒内按过back键，可以退出应用。
-            BackHandler.exitApp();
-            return false;
+        console.log(NavigatorService.getCurrentRoute())
+        let currentRoute = NavigatorService.getCurrentRoute();
+        if(currentRoute.routeName === "Tab"){
+            if (this.lastBackPressed && this.lastBackPressed + 2000 >= Date.now()) {
+                //最近2秒内按过back键，可以退出应用。
+                BackHandler.exitApp();
+                return false;
+            }
+
+            this.lastBackPressed = Date.now();
+            ToastAndroid.show('再按一次退出应用', ToastAndroid.SHORT);
+            return true;
         }
 
-        this.lastBackPressed = Date.now();
-        ToastAndroid.show('再按一次退出应用', ToastAndroid.SHORT);
-        return true;
+
 
     };
 
@@ -95,7 +101,7 @@ export default class PopularTab extends Component<Props> {
     render() {
         return (
             <View style={stys.container}>
-                <AppNavigator
+               {/* <AppNavigator
                     ref={nav => { navigation = nav }}
                     onNavigationStateChange = {(prevState, newState, action) => {
                         if (newState.routes.length > 1) {
@@ -104,7 +110,7 @@ export default class PopularTab extends Component<Props> {
                             BackHandler.addEventListener('hardwareBackPress', this.onBackAndroid);
                         }
                     }}
-                />
+                />*/}
                 <View style={{
                     flexDirection: "row",
                     justifyContent: "space-between",

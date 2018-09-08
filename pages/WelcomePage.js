@@ -12,6 +12,8 @@ import {
   View
 } from 'react-native';
 import {NavigationActions} from "react-navigation"
+import NavigatorService from  "./other/NavigatorService"
+import AppNavigator from '../AppNavigator'
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -36,7 +38,9 @@ export default class WelcomePage extends Component<Props> {
 
   render() {
     return (
+
       <View style={styles.container}>
+
         <Text style={styles.welcome}>
           Welcome to React Native!
         </Text>
